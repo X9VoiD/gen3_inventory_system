@@ -1,0 +1,10 @@
+@baseURL = https://<your-tailscale-machine-name>.ts.net/api/v1
+
+### Login
+POST {{baseURL}}/login
+Content-Type: application/json
+
+{
+  "username": "your_username",
+  "password": "your_password"
+}

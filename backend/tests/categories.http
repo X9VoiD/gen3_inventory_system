@@ -1,0 +1,7 @@
+@baseURL = https://<your-tailscale-machine-name>.ts.net/api/v1
+
+### Get All Categories
+GET {{baseURL}}/categories
+
+### Get Category By ID
+GET {{baseURL}}/categories/1

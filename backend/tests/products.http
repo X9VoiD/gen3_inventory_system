@@ -1,0 +1,59 @@
+@baseURL = https://<your-tailscale-machine-name>.ts.net/api/v1
+
+### Get All Products
+GET {{baseURL}}/products
+Authorization: Bearer <token>
+
+### Get All Products (with filters)
+GET {{baseURL}}/products?category_id=1&supplier_id=1&name=Notebook&is_active=1
+Authorization: Bearer <token>
+
+### Get Product by ID
+GET {{baseURL}}/products/1
+Authorization: Bearer <token>
+
+### Create Product
+POST {{baseURL}}/products
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+    "item_code": "NEW-001",
+    "name": "New Product",
+    "description": "A new product",
+    "supplier_id": 1,
+    "category_id": 1,
+    "unit_cost": 12.50,
+    "selling_price": 15.00,
+    "is_vat_exempt": 0
+}
+
+### Update Product (PUT)
+PUT {{baseURL}}/products/1
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "item_code": "UPD-001",
+  "name": "Updated Product",
+  "description": "An updated product",
+  "supplier_id": 1,
+  "category_id": 1,
+  "unit_cost": 13.50,
+  "selling_price": 16.00,
+  "is_vat_exempt": 1,
+  "is_active": 1
+}
+
+### Update Product (PATCH)
+PATCH {{baseURL}}/products/1
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+    "selling_price": 17.00
+}
+
+### Deactivate Product
+DELETE {{baseURL}}/products/1
+Authorization: Bearer <token>
