@@ -2,6 +2,8 @@
 
 This document describes the REST API for the Inventory Management System. This API allows for managing users, suppliers, categories, products, and inventory transactions.
 
+New feature
+
 **Base URL:** `https://<your-tailscale-machine-name>.ts.net/api/v1/`
 
 (Replace `<your-tailscale-machine-name>` with your Tailscale machine name.)
