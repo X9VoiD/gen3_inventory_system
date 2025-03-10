@@ -1,20 +1,21 @@
 @baseURL = https://<your-tailscale-machine-name>.ts.net/api/v1
+@auth_token = ""
 
 ### Get All Products
 GET {{baseURL}}/products
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 
 ### Get All Products (with filters)
-GET {{baseURL}}/products?category_id=1&supplier_id=1&name=Notebook&is_active=1
-Authorization: Bearer <token>
+GET {{baseURL}}/products?category_id=1&amp;supplier_id=1&amp;name=Notebook&amp;is_active=1
+Authorization: Bearer {{auth_token}}
 
 ### Get Product by ID
 GET {{baseURL}}/products/1
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 
 ### Create Product
 POST {{baseURL}}/products
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -30,7 +31,7 @@ Content-Type: application/json
 
 ### Update Product (PUT)
 PUT {{baseURL}}/products/1
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -47,7 +48,7 @@ Content-Type: application/json
 
 ### Update Product (PATCH)
 PATCH {{baseURL}}/products/1
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -56,4 +57,4 @@ Content-Type: application/json
 
 ### Deactivate Product
 DELETE {{baseURL}}/products/1
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}

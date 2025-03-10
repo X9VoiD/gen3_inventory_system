@@ -1,16 +1,17 @@
 @baseURL = https://<your-tailscale-machine-name>.ts.net/api/v1
+@auth_token = ""
 
 ### Get All Suppliers
 GET {{baseURL}}/suppliers
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 
 ### Get Supplier by ID
 GET {{baseURL}}/suppliers/1
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 
 ### Create Supplier
 POST {{baseURL}}/suppliers
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -20,7 +21,7 @@ Content-Type: application/json
 
 ### Update Supplier (PUT)
 PUT {{baseURL}}/suppliers/1
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -30,7 +31,7 @@ Content-Type: application/json
 
 ### Update Supplier (PATCH)
 PATCH {{baseURL}}/suppliers/1
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -39,4 +40,4 @@ Content-Type: application/json
 
 ### Delete Supplier
 DELETE {{baseURL}}/suppliers/1
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}

@@ -1,16 +1,17 @@
-@baseURL = https://<your-tailscale-machine-name>.ts.net/api/v1
+# @baseURL = https://<your-tailscale-machine-name>.ts.net/api/v1
+@baseURL = http://127.0.0.1:5000/api/v1
 
 ### Get All Users (Admin)
 GET {{baseURL}}/users
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 
 ### Get User by ID (Admin or Self)
 GET {{baseURL}}/users/1
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 
 ### Create User (Admin)
 POST {{baseURL}}/users
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -21,7 +22,7 @@ Content-Type: application/json
 
 ### Update User (PUT - Admin or Self)
 PUT {{baseURL}}/users/1
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -33,7 +34,7 @@ Content-Type: application/json
 
 ### Partially Update User (PATCH - Admin or Self)
 PATCH {{baseURL}}/users/1
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -42,4 +43,4 @@ Content-Type: application/json
 
 ### Deactivate User (Admin)
 DELETE {{baseURL}}/users/1
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}

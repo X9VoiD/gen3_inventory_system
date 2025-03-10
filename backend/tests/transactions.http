@@ -1,20 +1,22 @@
 @baseURL = https://<your-tailscale-machine-name>.ts.net/api/v1
 
+@auth_token = ""
+
 ### Get All Transactions
 GET {{baseURL}}/transactions
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 
 ### Get All Transactions (with filters)
-GET {{baseURL}}/transactions?product_id=1&transaction_type=Delivery&start_date=2023-10-01&end_date=2023-10-31
-Authorization: Bearer <token>
+GET {{baseURL}}/transactions?product_id=1&amp;transaction_type=Delivery&amp;start_date=2023-10-01&amp;end_date=2023-10-31
+Authorization: Bearer {{auth_token}}
 
 ### Get Transaction by ID
 GET {{baseURL}}/transactions/1
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 
 ### Create Transaction (Delivery)
 POST {{baseURL}}/transactions
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -28,7 +30,7 @@ Content-Type: application/json
 
 ### Create Transaction (Sale)
 POST {{baseURL}}/transactions
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
@@ -42,7 +44,7 @@ Content-Type: application/json
 
 ### Create Transaction (Return)
 POST {{baseURL}}/transactions
-Authorization: Bearer <token>
+Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 {
