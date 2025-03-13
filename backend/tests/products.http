@@ -1,5 +1,5 @@
-@baseURL = https://<your-tailscale-machine-name>.ts.net/api/v1
-@auth_token = ""
+@baseURL = http://127.0.0.1:5000/api/v1
+@auth_token =
 
 ### Get All Products
 GET {{baseURL}}/products
