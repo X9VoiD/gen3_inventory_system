@@ -1,8 +1,11 @@
 import sqlite3
 from flask import g
 
-def get_db(app):
-    db_path = app.config['DATABASE']
+def get_db(app=None):
+    if app is not None:
+        db_path = app.config['DATABASE']
+    else:
+        db_path = 'inventory.db'  # Default path for non-test environment
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(db_path)
