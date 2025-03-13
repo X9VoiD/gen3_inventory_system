@@ -1,81 +1,125 @@
-# Inventory System UI Specification
+# Inventory System User-Focused UI Guide
 
-## Page Catalog
+## User Role Capabilities
 
-### 1. Authentication Pages
-**Purpose:** Handle user login and password management
+### 1. Staff Member (Inventory Clerk/Cashier)
+**Key Responsibilities:** Process transactions, view stock levels, handle returns
 
-| Page | Components | Description | API Endpoints |
-|------|------------|-------------|---------------|
-| Login | LoginForm | Email/password entry with validation | POST /login |
-| Password Reset | PasswordResetForm | Secure password recovery flow | POST /password-reset |
+**I can:**
+- Scan barcodes to:
+  - Add items to sales receipts
+  - Verify delivery/pull-out items
+  - Process returns
+- View real-time stock counts for any item
+- Print receipts with VAT breakdown
+- Search transaction history from past 30 days
+- Request stock replenishment when low
 
-### 2. User Management (Admin Only)
-**Purpose:** Manage system users and permissions
+**Example Workflow - Processing a Sale:**
+1. Scan item barcode → UI shows product details & price
+2. Enter quantity → UI calculates subtotal
+3. Repeat for all items → UI shows running total with VAT
+4. Accept payment → UI prints receipt & updates stock levels
+5. System automatically records transaction via POST /transactions
 
-| Page | Key Components | Functionality | Linked API |
-|------|----------------|---------------|------------|
-| User List | - Searchable table<br>- Role filters<br>- Activation toggles | View/search all users<br>Bulk actions | GET /users<br>PATCH /users/{id} |
-| User Profile | - Role selector<br>- Password validator<br>- Activity log | Create/edit users<br>View audit history | POST /users<br>PUT/PATCH /users/{id} |
+---
 
-### 3. Product Catalog
-**Purpose:** Manage inventory items and pricing
+### 2. Manager
+**Key Responsibilities:** Manage products, analyze reports, oversee inventory
 
-| Component | Description | Data Source | Validation |
-|-----------|-------------|-------------|------------|
-| Product Table | Sortable grid with stock alerts | GET /products | Item code uniqueness |
-| Product Form | VAT calculator<br>Barcode scanner integration | POST/PUT /products | Price formatting<br>Category selection |
+**I can:**
+- Add new products with photos/descriptions
+- Update pricing across product categories
+- Generate daily sales reports (PDF/Excel)
+- Approve large pull-out requests
+- Set low stock alerts per product
+- View employee transaction history
 
-### 4. Inventory Operations
-**Purpose:** Handle stock movements and transactions
+**Example Workflow - Adding New Product:**
+1. Click "New Product" → UI shows form with required fields
+2. Scan barcode → UI auto-fills item code
+3. Upload product image → UI resizes & stores via POST /products
+4. Set pricing → UI calculates VAT automatically
+5. Save → System validates uniqueness via GET /products?item_code=...
 
-#### 4.1 Core Flows:
-- **Delivery Receiving**
-  Components: Supplier selector, Bulk entry table
-  API: POST /transactions (type=Delivery)
+---
 
-- **Point of Sale**
-  Components: Barcode scanner, Cart manager, Receipt printer
-  API: POST /transactions (type=Sale)
+### 3. Administrator
+**Key Responsibilities:** Manage users, system settings, audit logs
 
-- **Returns Processing**
-  Components: Transaction lookup, Reason selector
-  API: POST /transactions (type=Return)
+**I can:**
+- Create staff accounts with role permissions
+- Reset forgotten passwords
+- View system activity logs
+- Export all transaction data
+- Configure VAT rates
+- Disable compromised accounts
 
-### 5. Reporting Hub
-**Purpose:** Generate business insights
+**Example Workflow - User Management:**
+1. Search user → UI shows recent activity via GET /users
+2. Edit role → UI confirms permission changes via PATCH /users/{id}
+3. Deactivate account → UI warns about pending transactions
+4. Confirm → System logs action via POST /audit-trail
 
-| Report Type | Filters | Visualization | Export | API Source |
-|-------------|---------|---------------|--------|------------|
-| Stock Levels | Category<br>Supplier | Inventory heatmap | Excel | GET /products?stock_on_hand_gte= |
-| Sales Trends | Date range<br>Product | Line charts | PDF | GET /transactions?type=Sale |
+---
 
-## Key UI Patterns
+## Core User Interfaces
 
-1. **Form Handling**:
-   - Real-time validation using API endpoints
-   - Auto-save drafts for complex forms
-   - Error recovery for failed submissions
+### A. Dashboard (All Roles)
+**Purpose:** Quick access to frequent tasks
 
-2. **Data Tables**:
-   - Server-side pagination (?_page=2&_limit=50)
-   - Column sorting matching API params
-   - Bulk action controls
+| Role       | Key Features                                                                 |
+|------------|-----------------------------------------------------------------------------|
+| Staff      | - Quick sale button<br>- Low stock warnings<br>- Shift summary             |
+| Manager    | - Sales trends graph<br>- Pending approvals<br>- Staff performance metrics |
+| Admin      | - System health monitor<br>- Audit log alerts<br>- User activity heatmap   |
 
-3. **Notifications**:
-   - Transaction success/failure alerts
-   - Stock level warnings
-   - System maintenance notices
+### B. Transaction Processing
+**User Needs:** Fast, error-resistant data entry
 
-## Security & Permissions
+**Features:**
+- Barcode scanning first design
+- Auto-complete for manual codes
+- Voice quantity entry ("Three boxes")
+- Offline mode with local cache
+- Instant VAT calculations
 
-| Role | Accessible Pages | API Scope |
-|------|------------------|-----------|
-| Staff | Inventory ops<br>Basic reports | POST /transactions<br>GET /products |
-| Manager | + Product mgmt<br>Advanced reports | + POST /products<br>GET /transactions |
-| Admin | Full system access | All endpoints |
+**Error Prevention:**
+- Color-coded stock warnings
+- Duplicate transaction alerts
+- Mandatory reason fields for returns
 
-## Mobile Optimization
-- Touch-friendly transaction forms
-- Offline sales recording (syncs when online)
-- Barcode scanning prioritization
+### C. Reporting Center
+**User Goals:** Access insights without IT help
+
+**Self-Service Reports:**
+1. Daily Sales Summary
+   - Filter by: Cashier, Payment Type
+   - Export as: PDF receipt log
+
+2. Inventory Health
+   - Filter by: Supplier, Category
+   - Visualize: Stock age pyramid
+
+3. Customer Returns
+   - Filter by: Reason, Product
+   - Export as: CSV for supplier
+
+---
+
+## Accessibility Features
+**For Warehouse Staff:**
+- High-contrast mode
+- Zoomable interface
+- Screen reader support
+- Physical keyboard shortcuts
+
+**For Management:**
+- Dark mode for long sessions
+- Multi-monitor layouts
+- Touchscreen optimization
+
+**Universal:**
+- Session timeout warnings
+- Two-factor authentication
+- Passwordless login option
