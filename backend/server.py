@@ -7,12 +7,15 @@ from flask import Flask, request, jsonify, g
 from functools import wraps
 
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
-from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from cryptography.exceptions import InvalidKey
 import jwt
 
+from flask_cors import CORS
+
 app = Flask(__name__)
+CORS(app)
+
 app.config['SECRET_KEY'] = secrets.token_hex(32)  # Generate a strong secret key
 app.config['DATABASE'] = 'inventory.db'
 app.config['JWT_SECRET_KEY'] = secrets.token_hex(32)  # Secret key for JWT
