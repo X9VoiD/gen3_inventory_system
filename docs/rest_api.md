@@ -321,8 +321,8 @@ The system has three user roles:
     *   `item_code` (string): Filter by item code.
     *   `name` (string): Filter by product name (partial match).
     *   `is_active` (integer, 0 or 1): Filter by active status.
-    *  `stock_on_hand_lte` (integer): Filter by the stock on hand less than or equal to the number.
-    * `stock_on_hand_gte` (integer): Filter by the stock on hand greater than or equal to the number.
+    *   `stock_on_hand_lte` (integer): Filter by the stock on hand less than or equal to the number.
+    *   `stock_on_hand_gte` (integer): Filter by the stock on hand greater than or equal to the number.
 *   **Response (200 OK):**
 
     ```json
