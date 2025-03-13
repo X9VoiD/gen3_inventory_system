@@ -1,112 +1,81 @@
-# UI Components, Routes, and Pages Specification
+# Inventory System UI Specification
 
-## 1. Authentication
-### Components
-- LoginForm
-- PasswordResetForm
-- JWTTokenHandler
+## Page Catalog
 
-### Routes
-- `/login` (Public)
-- `/password-reset` (Public)
+### 1. Authentication Pages
+**Purpose:** Handle user login and password management
 
-### Features
-- JWT token management
-- Session timeout handling
-- API error code mapping (401/403/404)
+| Page | Components | Description | API Endpoints |
+|------|------------|-------------|---------------|
+| Login | LoginForm | Email/password entry with validation | POST /login |
+| Password Reset | PasswordResetForm | Secure password recovery flow | POST /password-reset |
 
-## 2. User Management (Administrator Only)
-### Components
-- UserList (With API pagination)
-- UserForm (Supports PUT/PATCH operations)
-- RoleSelector (Matches API role enum)
-- ActivityLogTable (For audit requirements)
+### 2. User Management (Admin Only)
+**Purpose:** Manage system users and permissions
 
-### Routes
-- `/users` (Implements ?_page=2&_limit=20)
-- `/users/new` (POST)
-- `/users/edit/:id` (PUT/PATCH)
-- `/users/deactivate/:id` (DELETE)
+| Page | Key Components | Functionality | Linked API |
+|------|----------------|---------------|------------|
+| User List | - Searchable table<br>- Role filters<br>- Activation toggles | View/search all users<br>Bulk actions | GET /users<br>PATCH /users/{id} |
+| User Profile | - Role selector<br>- Password validator<br>- Activity log | Create/edit users<br>View audit history | POST /users<br>PUT/PATCH /users/{id} |
 
-## 3. Supplier Management
-### Components
-- SupplierList (With API filters)
-- SupplierForm (CRUD operations)
-- SupplierProductsTable (Linked data)
+### 3. Product Catalog
+**Purpose:** Manage inventory items and pricing
 
-### Routes
-- `/suppliers` (GET/POST)
-- `/suppliers/:id` (GET/PUT/PATCH/DELETE)
-- `/suppliers/:id/products`
+| Component | Description | Data Source | Validation |
+|-----------|-------------|-------------|------------|
+| Product Table | Sortable grid with stock alerts | GET /products | Item code uniqueness |
+| Product Form | VAT calculator<br>Barcode scanner integration | POST/PUT /products | Price formatting<br>Category selection |
 
-## 4. Category Management
-### Components
-- CategorySelector (Syncs with /categories API)
-- CategoryBadges (Visual filtering)
-- CategoryForm (Admin-only)
+### 4. Inventory Operations
+**Purpose:** Handle stock movements and transactions
 
-### Routes
-- `/categories` (Public GET)
-- `/categories/manage` (Admin CRUD)
+#### 4.1 Core Flows:
+- **Delivery Receiving**
+  Components: Supplier selector, Bulk entry table
+  API: POST /transactions (type=Delivery)
 
-## 5. Product Management
-### Components
-- ProductTable (Supports API query params)
-- ProductForm (All fields from API spec)
-- BarcodeScannerInput (With API fallback)
-- StockAlertBadge (Uses stock_on_hand_gte/lte)
+- **Point of Sale**
+  Components: Barcode scanner, Cart manager, Receipt printer
+  API: POST /transactions (type=Sale)
 
-### Routes
-- `/products` (Implements all API filters)
-- `/products/new` (POST with validation)
-- `/products/:id` (GET/PUT/PATCH)
+- **Returns Processing**
+  Components: Transaction lookup, Reason selector
+  API: POST /transactions (type=Return)
 
-## 6. Inventory Transactions
-### Components
-- TransactionTypeTabs (Delivery/Pull-out/Sale/Return)
-- TransactionForm (Dynamic fields per type)
-- ReceiptPreview (Matches API response format)
-- StockMovementGraph (Uses /transactions data)
+### 5. Reporting Hub
+**Purpose:** Generate business insights
 
-### Routes
-- `/transactions` (All types with filters)
-- `/transactions/deliveries` (POST)
-- `/transactions/sales` (POST)
-- `/transactions/returns` (POST)
+| Report Type | Filters | Visualization | Export | API Source |
+|-------------|---------|---------------|--------|------------|
+| Stock Levels | Category<br>Supplier | Inventory heatmap | Excel | GET /products?stock_on_hand_gte= |
+| Sales Trends | Date range<br>Product | Line charts | PDF | GET /transactions?type=Sale |
 
-## 7. Reporting
-### Components
-- ReportBuilder (Generates API query params)
-- DataExporter (Matches API Excel format)
-- DateRangePicker (ISO 8601 compliance)
+## Key UI Patterns
 
-### Routes
-- `/reports/stock` (Uses stock_on_hand filters)
-- `/reports/transactions` (All API params)
-
-## 8. API Integration Layer
-### Components
-- APIErrorHandler (Maps to UI errors)
-- RequestInterceptor (Handles Auth headers)
-- ResponseNormalizer (Standardizes API data)
-
-## 9. UI/UX Enhancements
-1. **API-Driven Validation**:
+1. **Form Handling**:
    - Real-time validation using API endpoints
-   - Duplicate checking for item codes
-   - Supplier/category existence verification
+   - Auto-save drafts for complex forms
+   - Error recovery for failed submissions
 
-2. **Pagination Controls**:
-   - Server-side pagination components
-   - Page size selectors
-   - Sortable table headers
+2. **Data Tables**:
+   - Server-side pagination (?_page=2&_limit=50)
+   - Column sorting matching API params
+   - Bulk action controls
 
-3. **Loading States**:
-   - Skeleton loaders for API calls
-   - Progressive form submission
-   - Background data refreshing
+3. **Notifications**:
+   - Transaction success/failure alerts
+   - Stock level warnings
+   - System maintenance notices
 
-4. **Error Recovery**:
-   - Automatic JWT refresh flow
-   - Retry mechanisms for failed API calls
-   - Offline transaction queuing
+## Security & Permissions
+
+| Role | Accessible Pages | API Scope |
+|------|------------------|-----------|
+| Staff | Inventory ops<br>Basic reports | POST /transactions<br>GET /products |
+| Manager | + Product mgmt<br>Advanced reports | + POST /products<br>GET /transactions |
+| Admin | Full system access | All endpoints |
+
+## Mobile Optimization
+- Touch-friendly transaction forms
+- Offline sales recording (syncs when online)
+- Barcode scanning prioritization
