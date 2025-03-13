@@ -1,14 +1,16 @@
 from datetime import timedelta
+import os
+import os.path
 
 from flask import Flask
 from flask_cors import CORS
 
-from backend.database import close_db, get_db
-from backend.api.users import users_bp
-from backend.api.suppliers import suppliers_bp
-from backend.api.categories import categories_bp
-from backend.api.products import products_bp
-from backend.api.transactions import transactions_bp
+from core.database import close_db
+from api.users import users_bp
+from api.suppliers import suppliers_bp
+from api.categories import categories_bp
+from api.products import products_bp
+from api.transactions import transactions_bp
 
 def create_app():
     app = Flask(__name__)
@@ -16,6 +18,13 @@ def create_app():
 
     app.config['DATABASE'] = 'inventory.db'
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)  # Token expiration
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
+
+    # Check if database file exists
+    if not os.path.exists(app.config['DATABASE']):
+        print(f"Error: Database file '{app.config['DATABASE']}' does not exist. Exiting.")
+        exit(1)
 
      # Check for SECRET_KEY
     if 'SECRET_KEY' not in app.config or not app.config['SECRET_KEY']:

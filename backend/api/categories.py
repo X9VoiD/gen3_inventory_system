@@ -1,6 +1,7 @@
-from flask import Blueprint, jsonify, g, request, current_app
-from backend.database import query_db, execute_query
-from backend.auth import role_required
+from flask import Blueprint, jsonify, request, current_app
+
+from core.database import query_db, execute_query
+from core.auth import role_required
 
 categories_bp = Blueprint('categories', __name__, url_prefix='/api/v1/categories')
 

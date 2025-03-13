@@ -1,10 +1,8 @@
-import os
 import sqlite3
 from flask import g
 
 def get_db(app):
     db_path = app.config['DATABASE']
-    db_exists = os.path.exists(db_path)
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(db_path)

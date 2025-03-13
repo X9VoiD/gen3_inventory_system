@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, g, current_app
-from backend.auth import token_required, role_required, generate_auth_token, verify_password, hash_password
-from backend.database import query_db, execute_query
+from core.auth import token_required, role_required, generate_auth_token, verify_password, hash_password
+from core.database import query_db, execute_query
 
 users_bp = Blueprint('users', __name__, url_prefix='/api/v1/users')
 

@@ -1,10 +1,10 @@
 import os
 import sqlite3
 import argparse
-from backend.auth import hash_password
+from core.auth import hash_password
 
 DATABASE_NAME = 'inventory.db'
-INIT_SQL_PATH = 'backend/init.sql'
+INIT_SQL_PATH = 'init.sql'
 
 def main():
     # Database initialization

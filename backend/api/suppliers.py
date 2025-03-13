@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, g, current_app
-from backend.auth import token_required, role_required
-from backend.database import query_db, execute_query
+from core.auth import token_required, role_required
+from core.database import query_db, execute_query
 
 suppliers_bp = Blueprint('suppliers', __name__, url_prefix='/api/v1/suppliers')
 

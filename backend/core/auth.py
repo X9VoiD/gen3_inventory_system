@@ -1,15 +1,14 @@
 import os
-import secrets
-from datetime import timedelta, timezone, datetime
+from datetime import timezone, datetime
 from functools import wraps
 
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 from cryptography.hazmat.backends import default_backend
 from cryptography.exceptions import InvalidKey
 import jwt
-from flask import request, jsonify, g
+from flask import request, jsonify, g, current_app
 
-from backend.database import query_db
+from core.database import query_db
 
 def hash_password(password):
     salt = os.urandom(16)
@@ -41,8 +40,8 @@ def token_required(f):
             return jsonify({'message': 'Token is missing!'}), 401
 
         try:
-            data = jwt.decode(token, g.app.config['JWT_SECRET_KEY'], algorithms=["HS256"])
-            current_user = query_db(g.app, 'SELECT * FROM users WHERE user_id = ?', [data['user_id']], one=True)
+            data = jwt.decode(token, current_app.config['JWT_SECRET_KEY'], algorithms=["HS256"])
+            current_user = query_db(current_app, 'SELECT * FROM users WHERE user_id = ?', [data['user_id']], one=True)
             if not current_user:
                 return jsonify({'message': 'User not found'}), 404
             if not current_user['is_active']:

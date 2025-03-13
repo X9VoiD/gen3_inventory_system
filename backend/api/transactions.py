@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, g, current_app
-from backend.auth import token_required
-from backend.database import query_db, execute_query
+from core.auth import token_required
+from core.database import query_db, execute_query
 
 transactions_bp = Blueprint('transactions', __name__, url_prefix='/api/v1/transactions')
 
