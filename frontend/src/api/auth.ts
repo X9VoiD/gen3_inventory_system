@@ -10,7 +10,25 @@ export async function login(username: string, password: string): Promise<string>
   });
 
   if (!response.ok) {
-    throw new Error('Login failed'); // TODO: more specific error handling
+    let errorMessage = 'Login failed';
+    try {
+      // Attempt to parse error response (even for non-200 responses)
+      const errorData = await response.json();
+      errorMessage = errorData.message || errorMessage;
+    } catch (error) {
+      // Handle non-JSON error response
+      errorMessage = await response.text() || errorMessage;
+    }
+
+    // Map specific status codes to messages
+    switch (response.status) {
+      case 401:
+        throw new Error('Invalid credentials');
+      case 404:
+        throw new Error('User not found'); // Not for user not found
+      default:
+        throw new Error(errorMessage);
+    }
   }
 
   const data = await response.json();

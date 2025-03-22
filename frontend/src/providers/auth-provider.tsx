@@ -33,9 +33,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const origin = location.state?.from?.pathname || '/';
       navigate(origin);
     } catch (error) {
-      console.error('Login failed:', error);
-      // TODO: Handle login error (e.g., display error message to user)
       setIsAuthenticated(false); // Login failed, set isAuthenticated to false
+      throw error;
     }
   };
 
