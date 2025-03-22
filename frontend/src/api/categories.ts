@@ -1,20 +1,20 @@
 import { API_BASE_URL } from '../config';
 import { useAuth } from '../providers/auth-provider';
 
-interface Category {
+export interface Category {
   category_id: number;
   name: string;
 }
 
-interface CreateCategoryPayload {
+export interface CreateCategoryPayload {
   name: string;
 }
 
-interface UpdateCategoryPayload {
+export interface UpdateCategoryPayload {
   name: string;
 }
 
-interface PartialUpdateCategoryPayload {
+export interface PartialUpdateCategoryPayload {
   name?: string;
 }
 

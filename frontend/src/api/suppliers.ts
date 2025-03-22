@@ -1,23 +1,23 @@
 import { API_BASE_URL } from '../config';
 import { useAuth } from '../providers/auth-provider';
 
-interface Supplier {
+export interface Supplier {
   supplier_id: number;
   name: string;
   contact_info: string | null;
 }
 
-interface CreateSupplierPayload {
+export interface CreateSupplierPayload {
   name: string;
   contact_info?: string;
 }
 
-interface UpdateSupplierPayload {
+export interface UpdateSupplierPayload {
   name: string;
   contact_info: string;
 }
 
-interface PartialUpdateSupplierPayload {
+export interface PartialUpdateSupplierPayload {
   name?: string;
   contact_info?: string;
 }

@@ -1,7 +1,7 @@
 import { API_BASE_URL } from '../config';
 import { useAuth } from '../providers/auth-provider';
 
-interface Product {
+export interface Product {
   product_id: number;
   item_code: string;
   name: string;
@@ -10,12 +10,12 @@ interface Product {
   category_id: number;
   unit_cost: number;
   selling_price: number;
-  is_vat_exempt: number;
+  is_vat_exempt: boolean;
   stock_on_hand: number;
-  is_active: number;
+  is_active: boolean;
 }
 
-interface ProductFilterParams {
+export interface ProductFilterParams {
   category_id?: number;
   supplier_id?: number;
   item_code?: string;
@@ -25,7 +25,7 @@ interface ProductFilterParams {
   stock_on_hand_gte?: number;
 }
 
-interface CreateProductPayload {
+export interface CreateProductPayload {
   item_code: string;
   name: string;
   description?: string;
@@ -33,15 +33,15 @@ interface CreateProductPayload {
   category_id: number;
   unit_cost: number;
   selling_price: number;
-  is_vat_exempt: number;
+  is_vat_exempt: boolean;
 }
 
-interface UpdateProductPayload extends CreateProductPayload {
+export interface UpdateProductPayload extends CreateProductPayload {
   is_active: number;
   stock_on_hand: number;
 }
 
-interface PartialUpdateProductPayload {
+export interface PartialUpdateProductPayload {
   name?: string;
   description?: string;
   supplier_id?: number;
