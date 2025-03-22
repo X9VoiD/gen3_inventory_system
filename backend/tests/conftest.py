@@ -1,9 +1,11 @@
 import pytest
 import tempfile
 import os
+import pytest
+import tempfile
+import os
 from core.app import create_app
-from core.database import get_db
-from core.auth import hash_password
+from core.database import get_db, init_db
 
 @pytest.fixture
 def app():
@@ -18,10 +20,10 @@ def app():
     app = create_app(config_overrides=config)
 
     with app.app_context():
+        init_db(app)
         db = get_db(app)
-        with open('init.sql', 'r') as f:
-            db.executescript(f.read())
         # Insert a test user
+        from core.auth import hash_password
         hashed_password = hash_password('test_password').hex()
         db.execute('INSERT INTO users (username, password, role, is_active) VALUES (?, ?, ?, ?)',
                    ('test_user', hashed_password, 'Administrator', 1))

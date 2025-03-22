@@ -2,24 +2,20 @@ import os
 import sqlite3
 import argparse
 from core.auth import hash_password
-
-DATABASE_NAME = 'inventory.db'
-INIT_SQL_PATH = 'init.sql'
+from core.database import init_db, DATABASE_NAME
 
 def main():
     # Database initialization
     db_exists = os.path.exists(DATABASE_NAME)
-    db = sqlite3.connect(DATABASE_NAME)
-    cursor = db.cursor()
 
     if not db_exists:
-        with open(INIT_SQL_PATH, 'r') as f:
-            sql = f.read()
-        cursor.executescript(sql)
-        db.commit()
+        init_db()
         print("Database initialized.")
     else:
         print("Database already exists.")
+
+    db = sqlite3.connect(DATABASE_NAME)
+    cursor = db.cursor()
 
     # Admin user creation
     parser = argparse.ArgumentParser(description='Create an admin user for the inventory system.')
