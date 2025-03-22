@@ -16,6 +16,9 @@ def create_app(config_overrides=None):
     app = Flask(__name__)
     CORS(app)
 
+    if config_overrides is None:
+        config_overrides = {}
+
     app.config['DATABASE'] = config_overrides.get('DATABASE', 'inventory.db')
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = config_overrides.get('JWT_ACCESS_TOKEN_EXPIRES', timedelta(hours=1))  # Token expiration
     app.config['SECRET_KEY'] = config_overrides.get('SECRET_KEY', os.getenv('SECRET_KEY'))
