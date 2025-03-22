@@ -1,6 +1,17 @@
 @import "tailwindcss";
 
 @theme {
+    /*
+    Usage of the colors:
+
+    Steps 1-2: Backgrounds, pairs with step 11-12 text
+    Steps 3-5: Interactive components, lightly colored buttons, pairs with step 11-12 text
+    Steps 6-8: Borders and separators, pairs with step 1-5 backgrounds
+    Step 8: Focus rings, pairs with steps 1-5 backgrounds
+    Steps 9-10: Solid backgrounds, dark buttons
+    Steps 11-12: High contrast text
+    */
+
     --color-ashley-accent: #DCE5DB;
     --color-ashley-accent-1: #e9ebe8;
     --color-ashley-accent-2: #e2e8e1;
@@ -40,6 +51,6 @@ input {
     @apply text-gray-900 placeholder-gray-400 bg-ashley-background border-2 border-ashley-gray rounded-md focus:outline-none focus:ring-2 focus:ring-ashley-accent-8 focus:border-ashley-accent-8
 }
 
-button {
+/* button {
     @apply py-2.5 text-sm font-medium text-gray-900 bg-ashley-accent border-3 border-ashley-gray rounded-md hover:bg-ashley-accent-4 focus:outline-none focus:ring-3 focus:ring-offset-1 focus:ring-ashley-accent-8
-}
+} */
