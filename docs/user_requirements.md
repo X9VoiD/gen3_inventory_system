@@ -2,7 +2,7 @@
 
 **1. Introduction**
 
-This document outlines the user requirements for the new inventory management system for [Client's Business Name/School Bookstore]. It details the functionalities the system must provide (functional requirements) and the qualities the system must possess (non-functional requirements).
+This document outlines the user requirements for the new inventory management system for Gen3 Bookstore. It details the functionalities the system must provide (functional requirements) and the qualities the system must possess (non-functional requirements).
 
 **2. User Roles**
 
@@ -36,9 +36,7 @@ Functional requirements describe *what* the system must do. They are organized b
     *   Supplier (mandatory)
     *   Unit Cost (mandatory)
     *   Selling Price (mandatory)
-    *   VAT Amount (mandatory)
-    *   Category (mandatory, from a predefined list: College Books, Basic Education Books)
-    *   Subcategory (mandatory, from a predefined list: Books, Uniforms, Supplies)
+    *   Category (mandatory, from a predefined list: College Books, Basic Education Books, Uniforms, School Supplies)
     *   VAT-Exempt Status (Yes/No, mandatory)
 *   **FR-PM-003:** The system shall automatically calculate the total price (with and without VAT) based on the Unit Cost, Selling Price, and VAT Amount.
 *   **FR-PM-004:** The system shall allow the user to edit existing product information.

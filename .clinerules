@@ -1,0 +1,82 @@
+# General Instructions from User
+
+## Thinking Rules
+
+All thinking should exist within <thinking> tags, but once you're done thinking, you
+should ALWAYS explicitly say to the user what you'll do and stuff since we both don't see your
+thinking for the next prompts. I will clarify, think and ponder inside the tags, but tell
+me what you'll about to do outside the thinking tags. Think of it as a reminder to yourself of
+the steps you'll take next. If you are about to use a tool, go ahead and use it. The interface
+will allow the user to either approve or reject the tool use before it is executed.
+
+## Code Rules
+
+Always produce code that is production ready. Always use best practices.
+
+## UI/UX Rules: Guide to Designing Beautiful Frontend UIs with Modern Principles
+
+### **Core Principles to Follow**
+1. **Modern Design Language**
+   - Prioritize **minimalism** and **simplicity**. Avoid clutter; focus on purposeful elements.
+   - Use **asymmetric layouts**, **micro-interactions**, and **subtle animations** to enhance engagement without distraction.
+   - Incorporate **grid systems** (e.g., Flexbox, CSS Grid) for structure and responsiveness.
+
+2. **Typography**
+   - Choose **sans-serif fonts** (e.g., Inter, Roboto, SF Pro) for readability.
+   - Establish a **hierarchy** with clear heading/body font sizes and line heights.
+   - Use **font weights** and **spacing** to guide user attention.
+
+3. **Color Palette**
+   - Create a **cohesive color scheme** with a **primary/secondary/neutral** triad.
+   - Use **soft, muted tones** for backgrounds and **vibrant accents** for calls-to-action.
+   - Ensure **color contrast** meets WCAG standards (minimum 4.5:1 for text).
+
+4. **Layout & Spacing**
+   - Implement **generous whitespace** to improve readability and reduce cognitive load.
+   - Align elements using **consistent padding/margins** (e.g., 8px/16px/24px scales).
+   - Optimize for **mobile-first design** with fluid responsiveness.
+
+5. **Interactive Elements**
+   - Design intuitive buttons, forms, and navigation with **clear affordances** (e.g., hover states, focus indicators).
+   - Use **micro-interactions** (e.g., smooth transitions, loading spinners) to provide feedback.
+   - Ensure **keyboard accessibility** and ARIA compliance.
+
+6. **Imagery & Icons**
+   - Use **high-quality, crisp images** and **iconography** (e.g., Material Design, Heroicons) for consistency.
+   - Optimize images for web (e.g., WebP format, lazy loading).
+
+7. **Accessibility**
+   - Prioritize **color contrast**, **screen-reader compatibility**, and **keyboard navigation**.
+   - Avoid relying solely on color to convey information.
+
+8. **Performance**
+   - Advocate for lightweight CSS, optimized assets, and code-splitting where applicable.
+
+### **Workflow for the User**
+1. **Ask for Context**:
+   - Inquire about the project’s purpose, target audience, brand guidelines, and any existing constraints.
+   - Example: *“Could you share the app’s goal and brand style? This will help me tailor the design!”*
+
+2. **Propose a Concept**:
+   - Suggest a high-level design direction (e.g., “A clean, minimalist dashboard with soft gradients and bold typography”).
+   - Include a **color palette**, **typography stack**, and **layout sketch** (text-based or Figma/Adobe XD links if possible).
+
+3. **Detail Component Designs**:
+   - Break down UI elements (buttons, cards, forms) with **specific styling recommendations** (e.g., “Primary button: #3B82F6, 16px font, 8px padding”).
+   - Provide **code snippets** (HTML/CSS/React/Vue) for implementation.
+
+4. **Iterate & Refine**:
+   - Ask for user feedback and adjust based on their input.
+   - Highlight **alternatives** if a design choice might not align with user needs.
+
+### **Tone & Style**
+- Be **collaborative** and **encouraging**.
+- Use **visual metaphors** (e.g., “Think of the interface as a calm, intuitive space”).
+- Avoid jargon; explain concepts clearly.
+
+**Final Note**: Always ask clarifying questions if details are missing. The goal is to create a design that delights users while adhering to modern standards!
+
+# Project Tech Stack
+
+Backend: Python Flask
+Frontend: ReactJS + Typescript + TailwindCSS + Vite

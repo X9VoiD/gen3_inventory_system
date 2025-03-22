@@ -1,1 +1,45 @@
 @import "tailwindcss";
+
+@theme {
+    --color-ashley-accent: #DCE5DB;
+    --color-ashley-accent-1: #e9ebe8;
+    --color-ashley-accent-2: #e2e8e1;
+    --color-ashley-accent-3: #d7ded6;
+    --color-ashley-accent-4: #cdd5cc;
+    --color-ashley-accent-5: #c4cdc3;
+    --color-ashley-accent-6: #bac4b8;
+    --color-ashley-accent-7: #adb9ac;
+    --color-ashley-accent-8: #99a597;
+    --color-ashley-accent-9: #6c786a;
+    --color-ashley-accent-10: #5f6a5d;
+    --color-ashley-accent-11: #465145;
+    --color-ashley-accent-12: #1a2419;
+
+    --color-ashley-gray: #99B3AE;
+    --color-ashley-gray-1: #e6eceb;
+    --color-ashley-gray-2: #dde9e7;
+    --color-ashley-gray-3: #d2dfdc;
+    --color-ashley-gray-4: #c7d6d3;
+    --color-ashley-gray-5: #bececb;
+    --color-ashley-gray-6: #b2c6c2;
+    --color-ashley-gray-7: #a6bab6;
+    --color-ashley-gray-8: #8ea8a3;
+    --color-ashley-gray-9: #567c76;
+    --color-ashley-gray-10: #4c726c;
+    --color-ashley-gray-11: #30564f;
+    --color-ashley-gray-12: #002621;
+
+    --color-ashley-background: #f0eeea;
+}
+
+html {
+    font-family: monospace;
+}
+
+input {
+    @apply text-gray-900 placeholder-gray-400 bg-ashley-background border-2 border-ashley-gray rounded-md focus:outline-none focus:ring-2 focus:ring-ashley-accent-8 focus:border-ashley-accent-8
+}
+
+button {
+    @apply py-2.5 text-sm font-medium text-gray-900 bg-ashley-accent border-3 border-ashley-gray rounded-md hover:bg-ashley-accent-4 focus:outline-none focus:ring-3 focus:ring-offset-1 focus:ring-ashley-accent-8
+}
