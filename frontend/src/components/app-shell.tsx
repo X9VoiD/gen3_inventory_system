@@ -50,12 +50,12 @@ const AppShell = () => {
       >
         <div className="px-4 md:px-8 h-full flex items-center justify-between">
           {/* Logo and mobile menu toggle */}
-            <div className="flex items-center">
-              <button
-                className="mr-4 md:hidden text-ashley-gray-1"
-                onClick={toggleMobileMenu}
-                aria-label="Toggle menu"
-              >
+          <div className="flex items-center">
+            <button
+              className="mr-4 md:hidden text-ashley-gray-1 hover:cursor-pointer"
+              onClick={toggleMobileMenu}
+              aria-label="Toggle menu"
+            >
               {isMobileMenuOpen ? (
                 <X className="h-6 w-6" />
               ) : (
@@ -146,7 +146,7 @@ const AppShell = () => {
 
             <div className="p-4 border-t border-ashley-gray-8">
               <button
-                className="flex items-center p-2 w-full rounded-md text-ashley-gray-1 hover:bg-ashley-gray-8 transition"
+                className="flex items-center p-2 w-full rounded-md text-ashley-gray-1 hover:bg-ashley-gray-8 hover:cursor-pointer transition"
                 onClick={handleLogout}
               >
                 <LogOut className="mr-3" />
