@@ -9,6 +9,7 @@ interface AuthContextProps {
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   userEmail: string | null;
+  authToken: string | null;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -60,6 +61,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     logout,
     userEmail,
+    authToken: token
   }
 
   return (
