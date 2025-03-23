@@ -107,7 +107,8 @@ def test_update_product(app, client):
         'unit_cost': 12.00,
         'selling_price': 18.00,
         'is_vat_exempt': 1,
-        'is_active': 1
+        'is_active': 1,
+        'stock_on_hand': 100
     }
     response = client.put(f'/api/v1/products/{product_id}', json=updated_product_data, headers={'Authorization': f'Bearer {admin_token}'})
     assert response.status_code == 200

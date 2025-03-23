@@ -1,3 +1,4 @@
+import sqlite3
 import pytest
 import tempfile
 import os
@@ -20,7 +21,9 @@ def app():
     app = create_app(config_overrides=config)
 
     with app.app_context():
-        init_db(app)
+        db_temp = sqlite3.connect(app.config["DATABASE"])
+        init_db(db_temp)
+        db_temp.close()
         db = get_db(app)
         # Insert a test user
         from core.auth import hash_password
