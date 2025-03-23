@@ -20,7 +20,8 @@ def create_app(config_overrides=None):
         config_overrides = {}
 
     app.config['DATABASE'] = config_overrides.get('DATABASE', 'inventory.db')
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = config_overrides.get('JWT_ACCESS_TOKEN_EXPIRES', timedelta(hours=1))  # Token expiration
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = config_overrides.get('JWT_ACCESS_TOKEN_EXPIRES', timedelta(hours=1))
+    app.config['JWT_REFRESH_TOKEN_EXPIRES'] = config_overrides.get('JWT_REFRESH_TOKEN_EXPIRES', timedelta(hours=24 * 3))
     app.config['SECRET_KEY'] = config_overrides.get('SECRET_KEY', os.getenv('SECRET_KEY'))
     app.config['JWT_SECRET_KEY'] = config_overrides.get('JWT_SECRET_KEY', os.getenv('JWT_SECRET_KEY'))
 

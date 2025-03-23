@@ -1,36 +1,42 @@
-import { API_BASE_URL } from '../config';
+import { apiClient } from './client';
 
-export async function login(username: string, password: string): Promise<string> {
-  const response = await fetch(`${API_BASE_URL}/users/login`, {
+interface LoginResponse {
+  access_token: string;
+  refresh_token: string;
+}
+
+export async function login(username: string, password: string): Promise<LoginResponse> {
+  const errorMapping = {
+    401: 'Invalid credentials',
+    404: 'User not found'
+  };
+
+  const data = await apiClient<LoginResponse>('/users/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ username, password }),
-  });
+  }, errorMapping);
+  return data;
+}
 
-  if (!response.ok) {
-    let errorMessage = 'Login failed';
-    try {
-      // Attempt to parse error response (even for non-200 responses)
-      const errorData = await response.json();
-      errorMessage = errorData.message || errorMessage;
-    } catch (error) {
-      // Handle non-JSON error response
-      errorMessage = await response.text() || errorMessage;
-    }
+interface RefreshResponse {
+  access_token: string;
+  refresh_token: string;
+}
 
-    // Map specific status codes to messages
-    switch (response.status) {
-      case 401:
-        throw new Error('Invalid credentials');
-      case 404:
-        throw new Error('User not found'); // Not for user not found
-      default:
-        throw new Error(errorMessage);
-    }
-  }
+export async function refreshToken(refreshToken: string, accessToken: string): Promise<RefreshResponse> {
+    const errorMapping = {
+        401: 'Invalid refresh token',
+    };
 
-  const data = await response.json();
-  return data.token;
+    const data = await apiClient<RefreshResponse>('/users/refresh', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ access_token: accessToken, refresh_token: refreshToken }),
+    }, errorMapping);
+    return data;
 }

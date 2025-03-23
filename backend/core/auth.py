@@ -1,12 +1,12 @@
 import os
-from datetime import timezone, datetime
+from datetime import datetime, timezone
 from functools import wraps
 
-from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
-from cryptography.hazmat.backends import default_backend
-from cryptography.exceptions import InvalidKey
 import jwt
-from flask import request, jsonify, g, current_app
+from cryptography.exceptions import InvalidKey
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
+from flask import current_app, g, jsonify, request
 
 from core.database import query_db
 
@@ -67,10 +67,40 @@ def role_required(roles):
         return decorated
     return decorator
 
-def generate_auth_token(app, user_id):
-     token = jwt.encode({
-                'user_id': user_id,
-                'exp': datetime.now(timezone.utc) + app.config['JWT_ACCESS_TOKEN_EXPIRES'],
-                'role': g.current_user['role'] if 'current_user' in g else None,
-            }, app.config['JWT_SECRET_KEY'], algorithm="HS256")
-     return token
+def generate_auth_token(app, user_id, token_type = "access"):
+    if token_type == 'access':
+        expires_delta = app.config['JWT_ACCESS_TOKEN_EXPIRES']
+    elif token_type == 'refresh':
+        expires_delta = app.config['JWT_REFRESH_TOKEN_EXPIRES']
+    else:
+        raise ValueError('Invalid token type')
+
+    if token_type == 'refresh':
+        # Generate a refresh token string (not JWT)
+        return os.urandom(64).hex()
+
+    # access token
+    token = jwt.encode({
+            'user_id': user_id,
+            'exp': datetime.now(timezone.utc) + expires_delta,
+            'type': token_type,
+            'role': g.current_user['role'] if 'current_user' in g else None,
+            'salt': os.urandom(16).hex()
+        }, app.config['JWT_SECRET_KEY'], algorithm="HS256")
+    return token
+
+def verify_refresh_token(app, refresh_token, access_token):
+    try:
+        data = jwt.decode(access_token, app.config['JWT_SECRET_KEY'], algorithms=["HS256"], options={'verify_exp': False})
+        user_id = data['user_id']
+        stored_refresh_token = query_db(
+            app,
+            "SELECT refresh_token FROM users WHERE user_id = ?",
+            [user_id],
+            one=True,
+        )
+        if stored_refresh_token and stored_refresh_token['refresh_token'] == refresh_token and data['type'] == 'access':
+            return user_id
+    except jwt.InvalidTokenError:
+        pass
+    return None

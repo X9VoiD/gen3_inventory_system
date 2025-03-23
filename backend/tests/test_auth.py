@@ -88,3 +88,70 @@ def test_role_required_staff_unauthorized(app):
 
         response = client.get('/test_staff_required', headers={'Authorization': f'Bearer {token}'})
         assert response.status_code == 403  # Unauthorized
+
+def test_refresh_token_route_valid(app):
+    with app.test_client() as client:
+        # First login to get tokens
+        user_login_data = {
+            'username': 'test_user',
+            'password': 'test_password'
+        }
+        login_response = client.post('/api/v1/users/login', json=user_login_data)
+        assert login_response.status_code == 200, f"Login failed: {login_response.json}"
+        tokens = login_response.json
+        access_token = tokens['access_token']
+        refresh_token = tokens['refresh_token']
+
+        # Perform refresh request
+        refresh_data = {
+            'access_token': access_token,
+            'refresh_token': refresh_token
+        }
+        refresh_response = client.post('/api/v1/users/refresh', json=refresh_data)
+        assert refresh_response.status_code == 200, f"Refresh failed: {refresh_response.json}"
+        new_tokens = refresh_response.json
+        assert 'access_token' in new_tokens, "access_token missing in refresh response"
+        assert 'refresh_token' in new_tokens, "refresh_token missing in refresh response"
+
+        # Verify the new tokens are different from the old ones
+        assert new_tokens['access_token'] != access_token
+        assert new_tokens['refresh_token'] != refresh_token
+
+def test_refresh_token_route_invalid_refresh_token(app):
+    with app.test_client() as client:
+        # Get valid access token
+        user_login_data = {
+            'username': 'test_user',
+            'password': 'test_password'
+        }
+        login_response = client.post('/api/v1/users/login', json=user_login_data)
+        assert login_response.status_code == 200, f"Login failed: {login_response.json}"
+        access_token = login_response.json['access_token']
+
+        # Use invalid refresh token
+        refresh_data = {
+            'access_token': access_token,
+            'refresh_token': 'invalid_token'
+        }
+        refresh_response = client.post('/api/v1/users/refresh', json=refresh_data)
+        assert refresh_response.status_code == 401
+        assert 'message' in refresh_response.json
+        assert refresh_response.json['message'] == 'Invalid tokens'
+
+def test_refresh_token_route_missing_tokens(app):
+    with app.test_client() as client:
+        # Missing refresh token
+        refresh_data = {
+            'access_token': 'some_token'
+        }
+        response = client.post('/api/v1/users/refresh', json=refresh_data)
+        assert response.status_code == 400
+        assert response.json['message'] == 'Refresh token is missing'
+
+        # Missing access token
+        refresh_data = {
+            'refresh_token': 'some_token'
+        }
+        response = client.post('/api/v1/users/refresh', json=refresh_data)
+        assert response.status_code == 400
+        assert response.json['message'] == 'Access token is missing'

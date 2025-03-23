@@ -8,3 +8,12 @@ Content-Type: application/json
   "username": "admin@test.com",
   "password": "password"
 }
+
+### Refresh token
+POST {{baseURL}}/users/refresh
+Content-Type: application/json
+
+{
+  "access_token": "test_access_token",
+  "refresh_token": "test_refresh_token"
+}

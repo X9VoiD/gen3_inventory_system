@@ -116,7 +116,8 @@ def test_login_valid(app, client):
 
     response = client.post('/api/v1/users/login', json=login_data)
     assert response.status_code == 200
-    assert 'token' in response.json
+    assert 'access_token' in response.json
+    assert 'refresh_token' in response.json
 
 def test_login_invalid(app, client):
     invalid_login_data = {

@@ -1,24 +1,65 @@
 from flask import Blueprint, request, jsonify, g, current_app
+import jwt
 from core.auth import token_required, role_required, generate_auth_token, verify_password, hash_password
 from core.database import query_db, execute_query
 
+from core.auth import verify_refresh_token
+
 users_bp = Blueprint('users', __name__, url_prefix='/api/v1/users')
 
-@users_bp.route('/login', methods=['POST'])
+@users_bp.route("/login", methods=["POST"])
 def login():
     auth = request.json
-    if not auth or not auth.get('username') or not auth.get('password'):
-        return jsonify({'message': 'Could not verify', 'WWW-Authenticate': 'Basic realm="Login required!"'}), 401
+    if not auth or not auth.get("username") or not auth.get("password"):
+        return (
+            jsonify(
+                {
+                    "message": "Could not verify",
+                    "WWW-Authenticate": 'Basic realm="Login required!"',
+                }
+            ),
+            401,
+        )
 
-    user = query_db(current_app, 'SELECT * FROM users WHERE username = ?', [auth['username']], one=True)
+    user = query_db(
+        current_app, "SELECT * FROM users WHERE username = ?", [auth["username"]], one=True
+    )
     if not user:
-        return jsonify({'message': 'User not found'}), 404
+        return jsonify({"message": "User not found"}), 404
 
-    if verify_password(bytes.fromhex(user['password']), auth['password']):
-        token = generate_auth_token(current_app, user['user_id'])
-        return jsonify({'token': token})
+    if verify_password(bytes.fromhex(user["password"]), auth["password"]):
+        access_token = generate_auth_token(current_app, user["user_id"], 'access')
+        refresh_token_string = generate_auth_token(current_app, user["user_id"], 'refresh') # Generate refresh token string
+        execute_query(current_app, 'UPDATE users SET refresh_token = ? WHERE user_id = ?', [refresh_token_string, user['user_id']]) # Store refresh token in db
+        return jsonify({'access_token': access_token, 'refresh_token': refresh_token_string}) # Return refresh token string
 
-    return jsonify({'message': 'Could not verify', 'WWW-Authenticate': 'Basic realm="Login required!"'}), 401
+    return (
+        jsonify(
+            {
+                "message": "Could not verify",
+                "WWW-Authenticate": 'Basic realm="Login required!"',
+            }
+        ),
+        401,
+    )
+
+@users_bp.route('/refresh', methods=['POST'])
+def refresh_token_route():
+    refresh_token_string = request.json.get('refresh_token') # get refresh token string from request body
+    access_token = request.json.get('access_token') # get access token from request body
+    if not refresh_token_string:
+        return jsonify({'message': 'Refresh token is missing'}), 400
+    if not access_token:
+        return jsonify({'message': 'Access token is missing'}), 400
+
+    user_id = verify_refresh_token(current_app, refresh_token_string, access_token) # verify refresh token against stored token
+    if not user_id:
+        return jsonify({'message': 'Invalid tokens'}), 401
+
+    access_token = generate_auth_token(current_app, user_id, 'access') # generate new access token
+    new_refresh_token_string = generate_auth_token(current_app, user_id, 'refresh') # generate new refresh token string
+    execute_query(current_app, 'UPDATE users SET refresh_token = ? WHERE user_id = ?', [new_refresh_token_string, user_id]) # update refresh token in db
+    return jsonify({'access_token': access_token, 'refresh_token': new_refresh_token_string}) # return new access and refresh tokens
 
 @users_bp.route('', methods=['GET'])
 @role_required(['Administrator'])

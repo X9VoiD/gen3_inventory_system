@@ -1,7 +1,15 @@
-import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { login as loginApi } from '../api/auth'; // Import login function from api/auth.ts
-import { useSessionStorage } from '../hooks/useSessionStorage'; // Import useSessionStorage hook
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+} from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { login as loginApi, refreshToken as refreshTokenApi } from "../api/auth";
+import { useSessionStorage } from "../hooks/useSessionStorage";
 
 interface AuthContextProps {
   isAuthenticated: boolean;
@@ -10,6 +18,7 @@ interface AuthContextProps {
   logout: () => void;
   userEmail: string | null;
   authToken: string | null;
+  refreshAccessToken: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -22,38 +31,82 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const [userEmail, setUserEmail] = useSessionStorage<string | null>('user_email', null);
-  const [token, setToken] = useSessionStorage<string | null>('jwt_token', null);
+  const [userEmail, setUserEmail] = useSessionStorage<string | null>(
+    "user_email",
+    null
+  );
+  const [accessToken, setAccessToken] = useSessionStorage<string | null>(
+    "access_token",
+    null
+  );
+  const [refreshToken, setRefreshToken] = useSessionStorage<string | null>(
+    "refresh_token",
+    null
+  );
 
   const login = async (username: string, password: string) => {
     try {
-      const token = await loginApi(username, password);
-      setToken(token);
-      setUserEmail(username); // Assuming username is email for now
+      const response = await loginApi(username, password);
+      setAccessToken(response.access_token);
+      setRefreshToken(response.refresh_token);
+      setUserEmail(username);
       setIsAuthenticated(true);
-      const origin = location.state?.from?.pathname || '/';
+      const origin = location.state?.from?.pathname || "/";
       navigate(origin);
     } catch (error) {
-      setIsAuthenticated(false); // Login failed, set isAuthenticated to false
+      setIsAuthenticated(false);
       throw error;
     }
   };
 
   const logout = () => {
     setIsAuthenticated(false);
-    setToken(null);
+    setAccessToken(null);
+    setRefreshToken(null);
     setUserEmail(null);
     navigate("/", { replace: true });
   };
 
-  // Check for token on component mount to persist login state
-  useEffect(() => {
-    if (token) {
-      setIsAuthenticated(true);
-      const origin = location.pathname || '/';
-      navigate(origin);
+  const refreshAccessToken = async () => {
+    if (!refreshToken || !accessToken) {
+      setIsAuthenticated(false);
+      navigate("/login");
+      return;
     }
-  }, []);
+
+    try {
+      const response = await refreshTokenApi(refreshToken, accessToken);
+      setAccessToken(response.access_token);
+      setRefreshToken(response.refresh_token)
+      setIsAuthenticated(true);
+
+    }
+    catch (error) {
+      setIsAuthenticated(false);
+      setAccessToken(null);
+      setRefreshToken(null);
+      setUserEmail(null);
+      navigate("/login");
+      throw error;
+    }
+  }
+
+  useEffect(() => {
+    if (accessToken) {
+      setIsAuthenticated(true);
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
+    // Refresh the access token every 4 minutes
+    const refreshInterval = setInterval(() => {
+      if (isAuthenticated && refreshToken && accessToken) {
+        refreshAccessToken();
+      }
+    }, 4 * 60 * 1000);
+
+    return () => clearInterval(refreshInterval);
+  }, [isAuthenticated, refreshToken, accessToken]);
 
   const contextValue: AuthContextProps = {
     isAuthenticated,
@@ -61,8 +114,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     logout,
     userEmail,
-    authToken: token
-  }
+    authToken: accessToken,
+    refreshAccessToken,
+  };
 
   return (
     <AuthContext.Provider value={contextValue}>

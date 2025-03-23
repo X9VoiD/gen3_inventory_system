@@ -1,4 +1,4 @@
-import { API_BASE_URL } from '../config';
+import { apiClient } from './client';
 
 export interface Product {
   product_id: number;
@@ -72,222 +72,64 @@ function buildQueryString(filters?: ProductFilterParams): string {
 export async function getAllProducts(authToken: string, filters?: ProductFilterParams): Promise<Product[]> {
   const queryString = buildQueryString(filters);
 
-  try {
-    const response = await fetch(`${API_BASE_URL}/products${queryString}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorMessage = `Failed to fetch products (${response.status})`;
-
-      try {
-        const errorData = JSON.parse(errorText);
-        errorMessage = errorData.message || errorMessage;
-      } catch {
-        errorMessage = errorText || errorMessage;
-      }
-
-      throw new Error(errorMessage);
-    }
-
-    return await response.json() as Product[];
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`Network error: ${error.message}`);
-    }
-    throw new Error('Unknown network error');
-  }
+  return apiClient<Product[]>(`/products${queryString}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+  });
 }
 
 export async function getProductById(authToken: string, productId: number): Promise<Product> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorMessage = `Failed to fetch product (${response.status})`;
-
-      if (response.status === 404) {
-        errorMessage = 'Product not found';
-      } else {
-        try {
-          const errorData = JSON.parse(errorText);
-          errorMessage = errorData.message || errorMessage;
-        } catch {
-          errorMessage = errorText || errorMessage;
-        }
-      }
-      throw new Error(errorMessage);
-    }
-
-    return await response.json() as Product;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`Network error: ${error.message}`);
-    }
-    throw new Error('Unknown network error');
-  }
+  return apiClient<Product>(`/products/${productId}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+  });
 }
 
 export async function createProduct(authToken: string, productData: CreateProductPayload): Promise<Product> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/products`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(productData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorMessage = `Failed to create product (${response.status})`;
-
-      if (response.status === 400) {
-        errorMessage = 'Invalid product data';
-      } else {
-        try {
-          const errorData = JSON.parse(errorText);
-          errorMessage = errorData.message || errorMessage;
-        } catch {
-          errorMessage = errorText || errorMessage;
-        }
-      }
-      throw new Error(errorMessage);
-    }
-
-    return await response.json() as Product;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`Network error: ${error.message}`);
-    }
-    throw new Error('Unknown network error');
-  }
+  return apiClient<Product>('/products', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(productData),
+  });
 }
 
 export async function updateProduct(authToken: string, productId: number, productData: UpdateProductPayload): Promise<Product> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(productData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorMessage = `Failed to update product (${response.status})`;
-
-      if (response.status === 404) {
-        errorMessage = 'Product not found';
-      } else if (response.status === 400) {
-        errorMessage = 'Invalid product data';
-      }
-      else {
-        try {
-          const errorData = JSON.parse(errorText);
-          errorMessage = errorData.message || errorMessage;
-        } catch {
-          errorMessage = errorText || errorMessage;
-        }
-      }
-      throw new Error(errorMessage);
-    }
-
-    return await response.json() as Product;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`Network error: ${error.message}`);
-    }
-    throw new Error('Unknown network error');
-  }
+  return apiClient<Product>(`/products/${productId}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(productData),
+  });
 }
 
 export async function partialUpdateProduct(authToken: string, productId: number, productData: PartialUpdateProductPayload): Promise<Product> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
-      method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(productData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorMessage = `Failed to partially update product (${response.status})`;
-
-      if (response.status === 404) {
-        errorMessage = 'Product not found';
-      } else if (response.status === 400) {
-        errorMessage = 'No valid fields to update';
-      }
-      else {
-        try {
-          const errorData = JSON.parse(errorText);
-          errorMessage = errorData.message || errorMessage;
-        } catch {
-          errorMessage = errorText || errorMessage;
-        }
-      }
-      throw new Error(errorMessage);
-    }
-
-    return await response.json() as Product;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`Network error: ${error.message}`);
-    }
-    throw new Error('Unknown network error');
-  }
+  return apiClient<Product>(`/products/${productId}`, {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(productData),
+  });
 }
 
 export async function deactivateProduct(authToken: string, productId: number): Promise<void> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorMessage = `Failed to deactivate product (${response.status})`;
-
-      if (response.status === 404) {
-        errorMessage = 'Product not found';
-      } else {
-        try {
-          const errorData = JSON.parse(errorText);
-          errorMessage = errorData.message || errorMessage;
-        } catch {
-          errorMessage = errorText || errorMessage;
-        }
-      }
-      throw new Error(errorMessage);
-    }
-
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(`Network error: ${error.message}`);
-    }
-    throw new Error('Unknown network error');
-  }
+  return apiClient<void>(`/products/${productId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+  });
 }
