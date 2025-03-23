@@ -69,7 +69,8 @@ def role_required(roles):
 
 def generate_auth_token(app, user_id):
      token = jwt.encode({
-            'user_id': user_id,
-            'exp': datetime.now(timezone.utc) + app.config['JWT_ACCESS_TOKEN_EXPIRES']
-        }, app.config['JWT_SECRET_KEY'], algorithm="HS256")
+                'user_id': user_id,
+                'exp': datetime.now(timezone.utc) + app.config['JWT_ACCESS_TOKEN_EXPIRES'],
+                'role': g.current_user['role'] if 'current_user' in g else None,
+            }, app.config['JWT_SECRET_KEY'], algorithm="HS256")
      return token
