@@ -21,8 +21,12 @@ const UsersPage: React.FC = () => {
         const data = await getAllUsers(authToken);
         setUsers(data);
       } catch (error) {
-        console.error('Failed to fetch users:', error);
-        addNotification(`Failed to fetch users: ${error}`, 'error');
+        if (error instanceof Error) {
+          addNotification(`Failed to fetch users: ${error.message}`, 'error');
+        } else {
+          addNotification('Failed to fetch users', 'error');
+        }
+        console.error('Error fetching users:', error)
       } finally {
         setLoading(false);
       }

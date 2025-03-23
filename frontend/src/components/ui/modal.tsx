@@ -31,8 +31,8 @@ const Modal: React.FC<ModalProps> = ({
           <div className="absolute inset-0 bg-ashley-gray-12 opacity-75"></div>
         </div>
 
-        <div className="mt-8 mb-8 bg-ashley-background rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
-          <div className="bg-ashley-background px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+        <div className="mt-8 mb-8 bg-ashley-gray-1 rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+          <div className="bg-ashley-gray-1 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div className="sm:flex sm:items-start">
               <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                 <h3 className="text-lg leading-6 font-medium text-ashley-gray-12" id="modal-title">

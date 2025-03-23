@@ -61,7 +61,6 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, supp
     }
   };
 
-
   const supplierOptions = suppliers.map(supplier => ({
     value: supplier.supplier_id,
     label: supplier.name

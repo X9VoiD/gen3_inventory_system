@@ -17,7 +17,9 @@ const ProductManagementPage: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [suppliersMap, setSuppliersMap] = useState<Map<number, Supplier>>(new Map());
   const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesMap, setCategoriesMap] = useState<Map<number, Category>>(new Map());
 
   const fetchProducts = async () => {
     if (authToken) {
@@ -25,8 +27,12 @@ const ProductManagementPage: React.FC = () => {
         const data = await getAllProducts(authToken);
         setProducts(data);
       } catch (error) {
-        console.error('Failed to fetch products:', error);
-        addNotification(`Failed to fetch users: ${error}`, 'error');
+        if (error instanceof Error) {
+          addNotification(`Failed to fetch products: ${error.message}`, 'error');
+        } else {
+          addNotification('Failed to fetch products', 'error');
+        }
+        console.error('Error fetching products:', error)
       } finally {
         setLoading(false);
       }
@@ -43,7 +49,13 @@ const ProductManagementPage: React.FC = () => {
           const suppliersData = await getAllSuppliers(authToken);
           const categoriesData = await getAllCategories();
           setSuppliers(suppliersData);
+          const suppliersMapData = new Map<number, Supplier>();
+          suppliersData.forEach(supplier => suppliersMapData.set(supplier.supplier_id, supplier));
+          setSuppliersMap(suppliersMapData);
           setCategories(categoriesData);
+          const categoriesMapData = new Map<number, Category>();
+          categoriesData.forEach(category => categoriesMapData.set(category.category_id, category));
+          setCategoriesMap(categoriesMapData);
         } catch (error) {
           console.error('Failed to fetch suppliers or categories:', error);
         }
@@ -109,8 +121,12 @@ const ProductManagementPage: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-12">{product.item_code}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-12">{product.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">{product.description || '-'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">{product.supplier_id}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">{product.category_id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">
+                      {suppliersMap.get(product.supplier_id)?.name || 'Unknown Supplier'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">
+                      {categoriesMap.get(product.category_id)?.name || 'Unknown Category'}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">{product.unit_cost}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">{product.selling_price}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">{product.is_vat_exempt ? 'Yes' : 'No'}</td>

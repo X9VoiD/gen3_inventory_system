@@ -1,22 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { getAllTransactions, Transaction } from '../api/transactions';
+import { getAllSuppliers, Supplier } from '../api/suppliers';
+import { getAllUsers, User } from '../api/users';
 import { useAuth } from '../providers/auth-provider';
+import { useNotification } from '../providers/notification-provider';
 import AddTransactionModal from '../components/add-transaction-modal';
 
 const TransactionPage: React.FC = () => {
   const { authToken } = useAuth();
+  const { addNotification } = useNotification();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [suppliersMap, setSuppliersMap] = useState<Map<number, Supplier>>(new Map());
+  const [usersMap, setUsersMap] = useState<Map<number, User>>(new Map());
 
   const fetchTransactions = async () => {
     if (authToken) {
       try {
-        const data = await getAllTransactions(authToken);
-        setTransactions(data);
+        const transactionsData = await getAllTransactions(authToken);
+        setTransactions(transactionsData);
+
+        const suppliersData = await getAllSuppliers(authToken);
+        const suppliersMapData = new Map<number, Supplier>();
+        suppliersData.forEach(supplier => suppliersMapData.set(supplier.supplier_id, supplier));
+        setSuppliersMap(suppliersMapData);
+
+        const usersData = await getAllUsers(authToken);
+        const usersMapData = new Map<number, User>();
+        usersData.forEach(user => usersMapData.set(user.user_id, user));
+        setUsersMap(usersMapData);
       } catch (error) {
-        console.error('Failed to fetch transactions:', error);
-        // Handle error appropriately
+        if (error instanceof Error) {
+          addNotification(`Failed to fetch transactions: ${error.message}`, 'error');
+        } else {
+          addNotification('Failed to fetch transactions', 'error');
+        }
+        console.error('Error fetching transactions:', error)
       } finally {
         setLoading(false);
       }
@@ -75,8 +95,12 @@ const TransactionPage: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">{transaction.transaction_type}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">{transaction.quantity}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">{transaction.transaction_date}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">{transaction.supplier_id || '-'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">{transaction.user_id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">
+                      {transaction.supplier_id ? suppliersMap.get(transaction.supplier_id)?.name || '-' : '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">
+                      {usersMap.get(transaction.user_id)?.username || 'Unknown User'}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">{transaction.price || '-'}</td>
                   </tr>
                 ))}
