@@ -1,5 +1,4 @@
 import { API_BASE_URL } from '../config';
-import { useAuth } from '../providers/auth-provider';
 
 export interface Product {
   product_id: number;
@@ -70,8 +69,7 @@ function buildQueryString(filters?: ProductFilterParams): string {
   return params.size > 0 ? `?${params}` : '';
 }
 
-export async function getAllProducts(filters?: ProductFilterParams): Promise<Product[]> {
-  const { authToken } = useAuth();
+export async function getAllProducts(authToken: string, filters?: ProductFilterParams): Promise<Product[]> {
   const queryString = buildQueryString(filters);
 
   try {
@@ -106,9 +104,7 @@ export async function getAllProducts(filters?: ProductFilterParams): Promise<Pro
   }
 }
 
-export async function getProductById(productId: number): Promise<Product> {
-  const { authToken } = useAuth();
-
+export async function getProductById(authToken: string, productId: number): Promise<Product> {
   try {
     const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
       method: 'GET',
@@ -144,9 +140,7 @@ export async function getProductById(productId: number): Promise<Product> {
   }
 }
 
-export async function createProduct(productData: CreateProductPayload): Promise<Product> {
-  const { authToken } = useAuth();
-
+export async function createProduct(authToken: string, productData: CreateProductPayload): Promise<Product> {
   try {
     const response = await fetch(`${API_BASE_URL}/products`, {
       method: 'POST',
@@ -183,9 +177,7 @@ export async function createProduct(productData: CreateProductPayload): Promise<
   }
 }
 
-export async function updateProduct(productId: number, productData: UpdateProductPayload): Promise<Product> {
-  const { authToken } = useAuth();
-
+export async function updateProduct(authToken: string, productId: number, productData: UpdateProductPayload): Promise<Product> {
   try {
     const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
       method: 'PUT',
@@ -225,9 +217,7 @@ export async function updateProduct(productId: number, productData: UpdateProduc
   }
 }
 
-export async function partialUpdateProduct(productId: number, productData: PartialUpdateProductPayload): Promise<Product> {
-  const { authToken } = useAuth();
-
+export async function partialUpdateProduct(authToken: string, productId: number, productData: PartialUpdateProductPayload): Promise<Product> {
   try {
     const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
       method: 'PATCH',
@@ -267,9 +257,7 @@ export async function partialUpdateProduct(productId: number, productData: Parti
   }
 }
 
-export async function deactivateProduct(productId: number): Promise<void> {
-  const { authToken } = useAuth();
-
+export async function deactivateProduct(authToken: string, productId: number): Promise<void> {
   try {
     const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
       method: 'DELETE',

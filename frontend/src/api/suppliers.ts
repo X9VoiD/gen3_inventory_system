@@ -1,5 +1,4 @@
 import { API_BASE_URL } from '../config';
-import { useAuth } from '../providers/auth-provider';
 
 export interface Supplier {
   supplier_id: number;
@@ -22,9 +21,7 @@ export interface PartialUpdateSupplierPayload {
   contact_info?: string;
 }
 
-export async function getAllSuppliers(): Promise<Supplier[]> {
-  const { authToken } = useAuth();
-
+export async function getAllSuppliers(authToken: string): Promise<Supplier[]> {
   try {
     const response = await fetch(`${API_BASE_URL}/suppliers`, {
       method: 'GET',
@@ -57,9 +54,7 @@ export async function getAllSuppliers(): Promise<Supplier[]> {
   }
 }
 
-export async function getSupplierById(supplierId: number): Promise<Supplier> {
-  const { authToken } = useAuth();
-
+export async function getSupplierById(authToken: string, supplierId: number): Promise<Supplier> {
   try {
     const response = await fetch(`${API_BASE_URL}/suppliers/${supplierId}`, {
       method: 'GET',
@@ -95,9 +90,7 @@ export async function getSupplierById(supplierId: number): Promise<Supplier> {
   }
 }
 
-export async function createSupplier(supplierData: CreateSupplierPayload): Promise<Supplier> {
-  const { authToken } = useAuth();
-
+export async function createSupplier(authToken: string, supplierData: CreateSupplierPayload): Promise<Supplier> {
   try {
     const response = await fetch(`${API_BASE_URL}/suppliers`, {
       method: 'POST',
@@ -134,9 +127,7 @@ export async function createSupplier(supplierData: CreateSupplierPayload): Promi
   }
 }
 
-export async function updateSupplier(supplierId: number, supplierData: UpdateSupplierPayload): Promise<Supplier> {
-  const { authToken } = useAuth();
-
+export async function updateSupplier(authToken: string, supplierId: number, supplierData: UpdateSupplierPayload): Promise<Supplier> {
   try {
     const response = await fetch(`${API_BASE_URL}/suppliers/${supplierId}`, {
       method: 'PUT',
@@ -175,9 +166,7 @@ export async function updateSupplier(supplierId: number, supplierData: UpdateSup
   }
 }
 
-export async function partialUpdateSupplier(supplierId: number, supplierData: PartialUpdateSupplierPayload): Promise<Supplier> {
-  const { authToken } = useAuth();
-
+export async function partialUpdateSupplier(authToken: string, supplierId: number, supplierData: PartialUpdateSupplierPayload): Promise<Supplier> {
   try {
     const response = await fetch(`${API_BASE_URL}/suppliers/${supplierId}`, {
       method: 'PATCH',
@@ -216,9 +205,7 @@ export async function partialUpdateSupplier(supplierId: number, supplierData: Pa
   }
 }
 
-export async function deleteSupplier(supplierId: number): Promise<void> {
-  const { authToken } = useAuth();
-
+export async function deleteSupplier(authToken: string, supplierId: number): Promise<void> {
   try {
     const response = await fetch(`${API_BASE_URL}/suppliers/${supplierId}`, {
       method: 'DELETE',

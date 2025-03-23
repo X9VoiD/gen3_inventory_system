@@ -1,5 +1,4 @@
 import { API_BASE_URL } from '../config';
-import { useAuth } from '../providers/auth-provider';
 
 interface User {
   user_id: number;
@@ -49,8 +48,7 @@ function buildQueryString(filters?: UserFilterParams): string {
   return params.size > 0 ? `?${params}` : '';
 }
 
-export async function getAllUsers(filters?: UserFilterParams): Promise<User[]> {
-  const { authToken } = useAuth();
+export async function getAllUsers(authToken: string, filters?: UserFilterParams): Promise<User[]> {
   const queryString = buildQueryString(filters);
 
   try {
@@ -85,9 +83,7 @@ export async function getAllUsers(filters?: UserFilterParams): Promise<User[]> {
   }
 }
 
-export async function getUserById(userId: number): Promise<User> {
-  const { authToken } = useAuth();
-
+export async function getUserById(authToken: string, userId: number): Promise<User> {
   try {
     const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
       method: 'GET',
@@ -125,9 +121,7 @@ export async function getUserById(userId: number): Promise<User> {
   }
 }
 
-export async function createUser(userData: CreateUserPayload): Promise<User> {
-  const { authToken } = useAuth();
-
+export async function createUser(authToken: string, userData: CreateUserPayload): Promise<User> {
   try {
     const response = await fetch(`${API_BASE_URL}/users`, {
       method: 'POST',
@@ -163,9 +157,7 @@ export async function createUser(userData: CreateUserPayload): Promise<User> {
   }
 }
 
-export async function updateUser(userId: number, userData: UpdateUserPayload): Promise<User> {
-  const { authToken } = useAuth();
-
+export async function updateUser(authToken: string, userId: number, userData: UpdateUserPayload): Promise<User> {
   try {
     const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
       method: 'PUT',
@@ -204,9 +196,7 @@ export async function updateUser(userId: number, userData: UpdateUserPayload): P
   }
 }
 
-export async function partialUpdateUser(userId: number, userData: PartialUpdateUserPayload): Promise<User> {
-  const { authToken } = useAuth();
-
+export async function partialUpdateUser(authToken: string, userId: number, userData: PartialUpdateUserPayload): Promise<User> {
   try {
     const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
       method: 'PATCH',
@@ -245,9 +235,7 @@ export async function partialUpdateUser(userId: number, userData: PartialUpdateU
   }
 }
 
-export async function deactivateUser(userId: number): Promise<void> {
-  const { authToken } = useAuth();
-
+export async function deactivateUser(authToken: string, userId: number): Promise<void> {
   try {
     const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
       method: 'DELETE',

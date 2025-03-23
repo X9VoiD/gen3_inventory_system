@@ -3,6 +3,7 @@ import { Supplier } from '../api/suppliers';
 import { Category } from '../api/categories';
 import Select from 'react-select';
 import { createProduct } from '../api/products';
+import { useAuth } from '../providers/auth-provider';
 
 interface AddProductModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface AddProductModalProps {
 }
 
 const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, suppliers, categories, refetch }) => {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     item_code: '',
     name: '',
@@ -40,14 +42,20 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, supp
     }));
   };
 
+  const { authToken } = useAuth();
+
   const handleAdd = async () => {
+    setErrorMessage(null); // Reset error message on new attempt
     try {
-      await createProduct(formData);
+      if (!authToken) {
+        throw new Error("User not authenticated. Cannot create product.");
+      }
+      await createProduct(authToken, formData);
       onClose();
       refetch();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to create product:", error);
-      // Handle error appropriately (e.g., show an error message to the user)
+      setErrorMessage(error.message || "An unexpected error occurred.");
     }
   };
 
@@ -63,10 +71,15 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, supp
     label: category.name
   }));
 
+  const modifiedOnClose = () => {
+    setErrorMessage(null); // Clear error message when closing modal
+    onClose();
+  }
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen px-4">
-        <div className="fixed inset-0 transition-opacity" aria-hidden="true" onClick={onClose}>
+        <div className="fixed inset-0 transition-opacity" aria-hidden="true" onClick={modifiedOnClose}>
           <div className="absolute inset-0 bg-ashley-gray-12 opacity-75"></div>
         </div>
 
@@ -77,6 +90,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, supp
                 <h3 className="text-lg leading-6 font-medium text-ashley-gray-12" id="modal-title">
                   Add Product
                 </h3>
+                {errorMessage && <div className="text-red-500 text-sm mt-2">{errorMessage}</div>}
                 <div className="mt-2">
                   <form>
                     <div className="mb-4">
@@ -208,7 +222,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, supp
             <button
               type="button"
               className="mt-3 w-full inline-flex justify-center rounded-md border border-ashley-gray-6 shadow-sm px-4 py-2 bg-ashley-background text-base font-medium text-ashley-gray-12 hover:bg-ashley-gray-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ashley-accent-8 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-              onClick={onClose}
+              onClick={modifiedOnClose}
             >
               Cancel
             </button>

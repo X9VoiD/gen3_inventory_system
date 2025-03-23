@@ -6,6 +6,7 @@ import ProductManagementPage from "./pages/product-management-page";
 import TransactionPage from "./pages/transaction-page";
 import AppShell from "./components/app-shell";
 import UsersPage from "./pages/users-page";
+import SupplierManagementPage from "./pages/supplier-management-page";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
               <Route path="/products" element={<ProductManagementPage />} />
               <Route path="/transactions" element={<TransactionPage />} />
               <Route path="/users" element={<UsersPage />} />
+              <Route path="/suppliers" element={<SupplierManagementPage />} />
             </Route>
           </Route>
           <Route path="/login" element={<LoginPage />} />

@@ -1,5 +1,4 @@
 import { API_BASE_URL } from '../config';
-import { useAuth } from '../providers/auth-provider';
 
 export interface Category {
   category_id: number;
@@ -91,9 +90,7 @@ export async function getCategoryById(categoryId: number): Promise<Category> {
   }
 }
 
-export async function createCategory(categoryData: CreateCategoryPayload): Promise<Category> {
-  const { authToken } = useAuth();
-
+export async function createCategory(authToken: string, categoryData: CreateCategoryPayload): Promise<Category> {
   try {
     const response = await fetch(`${API_BASE_URL}/categories`, {
       method: 'POST',
@@ -132,9 +129,7 @@ export async function createCategory(categoryData: CreateCategoryPayload): Promi
   }
 }
 
-export async function updateCategory(categoryId: number, categoryData: UpdateCategoryPayload): Promise<Category> {
-  const { authToken } = useAuth();
-
+export async function updateCategory(authToken: string, categoryId: number, categoryData: UpdateCategoryPayload): Promise<Category> {
   try {
     const response = await fetch(`${API_BASE_URL}/categories/${categoryId}`, {
       method: 'PUT',
@@ -175,9 +170,7 @@ export async function updateCategory(categoryId: number, categoryData: UpdateCat
   }
 }
 
-export async function partialUpdateCategory(categoryId: number, categoryData: PartialUpdateCategoryPayload): Promise<Category> {
-  const { authToken } = useAuth();
-
+export async function partialUpdateCategory(authToken: string, categoryId: number, categoryData: PartialUpdateCategoryPayload): Promise<Category> {
   try {
     const response = await fetch(`${API_BASE_URL}/categories/${categoryId}`, {
       method: 'PATCH',
@@ -218,9 +211,7 @@ export async function partialUpdateCategory(categoryId: number, categoryData: Pa
   }
 }
 
-export async function deleteCategory(categoryId: number): Promise<void> {
-  const { authToken } = useAuth();
-
+export async function deleteCategory(authToken: string, categoryId: number): Promise<void> {
   try {
     const response = await fetch(`${API_BASE_URL}/categories/${categoryId}`, {
       method: 'DELETE',

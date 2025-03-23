@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { getAllProducts, Product } from '../api/products';
 import { getAllSuppliers, Supplier } from '../api/suppliers';
 import { getAllCategories, Category } from '../api/categories';
+import { useAuth } from '../providers/auth-provider';
 import { Pencil, Package } from 'lucide-react';
-import AddProductModal from '../components/AddProductModal';
+import AddProductModal from '../components/add-product-modal';
 
 const ProductManagementPage: React.FC = () => {
+  const { authToken } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,32 +15,37 @@ const ProductManagementPage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
 
   const fetchProducts = async () => {
-    try {
-      const data = await getAllProducts();
-      setProducts(data);
-    } catch (error) {
-      console.error('Failed to fetch products:', error);
-      // Handle error appropriately, e.g., show an error message to the user
-    } finally {
+    if (authToken) {
+      try {
+        const data = await getAllProducts(authToken);
+        setProducts(data);
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+        // Handle error appropriately, e.g., show an error message to the user
+      } finally {
+        setLoading(false);
+      }
+    } else {
       setLoading(false);
     }
   };
 
-
   useEffect(() => {
-    fetchProducts();
-    const fetchData = async () => {
-      try {
-        const suppliersData = await getAllSuppliers();
-        const categoriesData = await getAllCategories();
-        setSuppliers(suppliersData);
-        setCategories(categoriesData);
-      } catch (error) {
-        console.error('Failed to fetch suppliers or categories:', error);
-      }
-    };
-    fetchData();
-  }, []);
+    if (authToken) {
+      fetchProducts();
+      const fetchData = async () => {
+        try {
+          const suppliersData = await getAllSuppliers(authToken);
+          const categoriesData = await getAllCategories();
+          setSuppliers(suppliersData);
+          setCategories(categoriesData);
+        } catch (error) {
+          console.error('Failed to fetch suppliers or categories:', error);
+        }
+      };
+      fetchData();
+    }
+  }, [authToken]);
 
   const openModal = () => {
     setIsModalOpen(true);
