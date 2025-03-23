@@ -81,14 +81,15 @@ The system supports the following user roles:
 6.  **Start the server:**
 
     ```bash
-    python backend/server.py
+    cd backend
+    python ./main.py
     ```
 
     The server will be running on `http://0.0.0.0:5000`.
 
 ## Frontend Setup
 
-1.  **Navigate to the frontend directory:**
+1.  **Navigate to the frontend directory in a new terminal:**
 
     ```bash
     cd frontend
@@ -107,6 +108,12 @@ The system supports the following user roles:
     ```
 
     This will create a `dist` directory containing the compiled frontend files.
+
+4. **Or, Run the development server:**
+
+    ```bash
+    npm run dev
+    ```
 
 ## Deployment with Caddy
 
