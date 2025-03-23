@@ -75,7 +75,7 @@ def create_product():
 @role_required(['Administrator', 'Manager'])
 def update_product(product_id):
     data = request.json
-    required_fields = ['item_code', 'name', 'description', 'supplier_id', 'category_id', 'unit_cost', 'selling_price', 'is_vat_exempt','is_active']
+    required_fields = ['item_code', 'name', 'description', 'supplier_id', 'category_id', 'unit_cost', 'selling_price', 'is_vat_exempt','is_active', 'stock_on_hand']
     if not all(field in data for field in required_fields):
         return jsonify({'message': 'Missing required fields for PUT'}), 400
 
@@ -89,10 +89,10 @@ def update_product(product_id):
     execute_query(current_app, '''
         UPDATE products
         SET item_code = ?, name = ?, description = ?, supplier_id = ?, category_id = ?,
-        unit_cost = ?, selling_price = ?, is_vat_exempt = ?, is_active = ?
+        unit_cost = ?, selling_price = ?, is_vat_exempt = ?, is_active = ?, stock_on_hand = ?
         WHERE product_id = ?
     ''', [data['item_code'], data['name'], data.get('description'), data['supplier_id'], data['category_id'],
-          data['unit_cost'], data['selling_price'], data['is_vat_exempt'], data['is_active'], product_id])
+          data['unit_cost'], data['selling_price'], data['is_vat_exempt'], data['is_active'], data['stock_on_hand'], product_id])
     updated_product = query_db(current_app, 'SELECT * FROM products WHERE product_id = ?', [product_id], one=True)
     if not updated_product:
         return jsonify({'message': 'Product not found'}), 404
@@ -105,7 +105,7 @@ def partial_update_product(product_id):
     updates = []
     args = []
 
-    allowed_fields = ['item_code', 'name', 'description', 'supplier_id', 'category_id', 'unit_cost', 'selling_price', 'is_vat_exempt', 'is_active']
+    allowed_fields = ['item_code', 'name', 'description', 'supplier_id', 'category_id', 'unit_cost', 'selling_price', 'is_vat_exempt', 'is_active', 'stock_on_hand']
     for field in allowed_fields:
         if field in data:
             if field == 'supplier_id':

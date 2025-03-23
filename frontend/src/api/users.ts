@@ -1,29 +1,29 @@
 import { apiClient } from './client';
 
-interface User {
+export interface User {
   user_id: number;
   username: string;
   role: string;
   is_active: number;
 }
 
-interface UserFilterParams {
+export interface UserFilterParams {
   username?: string;
   role?: string;
   is_active?: number;
 }
 
-interface CreateUserPayload {
+export interface CreateUserPayload {
   username: string;
   password: string;
   role: string;
 }
 
-interface UpdateUserPayload extends CreateUserPayload {
+export interface UpdateUserPayload extends CreateUserPayload {
   is_active: number;
 }
 
-interface PartialUpdateUserPayload {
+export interface PartialUpdateUserPayload {
   username?: string;
   password?: string;
   role?: string;

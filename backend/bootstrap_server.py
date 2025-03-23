@@ -7,27 +7,27 @@ from core.database import init_db, DATABASE_NAME
 def main():
     # Database initialization
     db_exists = os.path.exists(DATABASE_NAME)
+    db = sqlite3.connect(DATABASE_NAME)
 
     if not db_exists:
-        init_db()
+        init_db(db)
         print("Database initialized.")
     else:
         print("Database already exists.")
 
-    db = sqlite3.connect(DATABASE_NAME)
     cursor = db.cursor()
 
     # Admin user creation
     parser = argparse.ArgumentParser(description='Create an admin user for the inventory system.')
-    parser.add_argument('username', type=str, help='The username for the admin account.')
+    parser.add_argument('email', type=str, help='The email for the admin account.')
     parser.add_argument('password', type=str, help='The password for the admin account.')
     args = parser.parse_args()
 
     hashed_password = hash_password(args.password).hex()
     cursor.execute('INSERT INTO users (username, password, role, is_active) VALUES (?, ?, ?, ?)',
-                   (args.username, hashed_password, 'Administrator', 1))
+                   (args.email, hashed_password, 'Administrator', 1))
     db.commit()
-    print(f"Admin user '{args.username}' created successfully.")
+    print(f"Admin user '{args.email}' created successfully.")
 
     db.close()
 

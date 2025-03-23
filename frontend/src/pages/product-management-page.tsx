@@ -5,12 +5,17 @@ import { getAllCategories, Category } from '../api/categories';
 import { useAuth } from '../providers/auth-provider';
 import { Pencil, Package } from 'lucide-react';
 import AddProductModal from '../components/add-product-modal';
+import EditProductModal from '../components/edit-product-modal';
+import { useNotification } from '../providers/notification-provider';
 
 const ProductManagementPage: React.FC = () => {
   const { authToken } = useAuth();
+  const { addNotification } = useNotification();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -21,7 +26,7 @@ const ProductManagementPage: React.FC = () => {
         setProducts(data);
       } catch (error) {
         console.error('Failed to fetch products:', error);
-        // Handle error appropriately, e.g., show an error message to the user
+        addNotification(`Failed to fetch users: ${error}`, 'error');
       } finally {
         setLoading(false);
       }
@@ -47,12 +52,22 @@ const ProductManagementPage: React.FC = () => {
     }
   }, [authToken]);
 
-  const openModal = () => {
-    setIsModalOpen(true);
+  const openAddModal = () => {
+    setIsAddModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const closeAddModal = () => {
+    setIsAddModalOpen(false);
+  };
+
+  const openEditModal = (product: Product) => {
+    setEditingProduct(product);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setEditingProduct(null);
+    setIsEditModalOpen(false);
   };
 
   return (
@@ -62,7 +77,7 @@ const ProductManagementPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-ashley-gray-12">Product Management</h1>
           <button
             className="bg-ashley-gray-9 hover:bg-ashley-gray-10 text-ashley-accent-1 font-bold py-2 px-4 rounded"
-            onClick={openModal}
+            onClick={openAddModal}
           >
             Add Product
           </button>
@@ -109,7 +124,7 @@ const ProductManagementPage: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-ashley-gray-11">{product.is_active ? 'Yes' : 'No'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button className="text-ashley-gray-9 hover:text-ashley-gray-10 text-xs px-2 py-1 flex items-center">
+                      <button onClick={() => openEditModal(product)} className="text-ashley-gray-9 hover:text-ashley-gray-10 text-xs px-2 py-1 flex items-center">
                         <Pencil className="h-4 w-4 mr-1" /> Edit
                       </button>
                     </td>
@@ -120,7 +135,17 @@ const ProductManagementPage: React.FC = () => {
           </div>
         )}
       </div>
-      <AddProductModal isOpen={isModalOpen} onClose={closeModal} suppliers={suppliers} categories={categories} refetch={fetchProducts} />
+      <AddProductModal isOpen={isAddModalOpen} onClose={closeAddModal} suppliers={suppliers} categories={categories} refetch={fetchProducts} />
+      {editingProduct && (
+        <EditProductModal
+          isOpen={isEditModalOpen}
+          onClose={closeEditModal}
+          suppliers={suppliers}
+          categories={categories}
+          product={editingProduct}
+          refetch={fetchProducts}
+        />
+      )}
     </div>
   );
 };

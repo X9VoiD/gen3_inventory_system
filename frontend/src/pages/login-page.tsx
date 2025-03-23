@@ -54,7 +54,7 @@ const LoginPage = () => {
               <input
                 type="email"
                 id="email"
-                className="block w-full py-3 pl-10 pr-10"
+                className="input block w-full py-3 pl-10 pr-10"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -72,7 +72,7 @@ const LoginPage = () => {
               <input
                 type={showPassword ? 'text' : 'password'}
                 id="password"
-                className="block w-full py-3 pl-10 pr-10"
+                className="input block w-full py-3 pl-10 pr-10"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

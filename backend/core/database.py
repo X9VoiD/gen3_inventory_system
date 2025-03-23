@@ -33,10 +33,8 @@ def execute_query(app, query, args=()):
     cur.close()
     return lastrowid
 
-def init_db(app):
-    db = get_db(app)
-    with app.app_context():
-        sql_script = """
+def init_db(db):
+    sql_script = """
 -- Create the users table
 CREATE TABLE users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -140,6 +138,6 @@ INSERT INTO categories (name) VALUES ('Basic Ed Books');
 INSERT INTO categories (name) VALUES ('Uniforms');
 INSERT INTO categories (name) VALUES ('School Supplies');
         """
-        db.executescript(sql_script)
-        db.commit()
-        print("Database initialized.")
+    db.executescript(sql_script)
+    db.commit()
+    print("Database initialized.")

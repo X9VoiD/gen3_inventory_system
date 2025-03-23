@@ -30,7 +30,7 @@ def create_app(config_overrides=None):
         print(f"Error: Database file '{app.config['DATABASE']}' does not exist. Exiting.")
         exit(1)
 
-     # Check for SECRET_KEY
+    # Check for SECRET_KEY
     if 'SECRET_KEY' not in app.config or not app.config['SECRET_KEY']:
         print("Error: SECRET_KEY is not set. Please set it in your environment variables.")
         exit(1)

@@ -47,7 +47,7 @@ html {
     font-family: monospace;
 }
 
-input {
+.input {
     @apply text-gray-900 placeholder-gray-400 bg-ashley-background border-2 border-ashley-gray rounded-md focus:outline-none focus:ring-2 focus:ring-ashley-accent-8 focus:border-ashley-accent-8
 }
 

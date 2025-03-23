@@ -76,7 +76,7 @@ const AppShell = () => {
                 <input
                   type="text"
                   placeholder="Search inventory, transactions..."
-                  className="w-full px-4 py-2 rounded-md  pl-10"
+                  className="input w-full px-4 py-2 rounded-md  pl-10"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />

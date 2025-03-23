@@ -1,33 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Supplier } from '../api/suppliers';
 import { Category } from '../api/categories';
 import Select from 'react-select';
-import { createProduct } from '../api/products';
+import { updateProduct, Product, UpdateProductPayload } from '../api/products';
 import { useAuth } from '../providers/auth-provider';
 import { useNotification } from '../providers/notification-provider';
 import Modal from './ui/modal';
 
-interface AddProductModalProps {
+interface EditProductModalProps {
   isOpen: boolean;
   onClose: () => void;
   suppliers: Supplier[];
   categories: Category[];
+  product: Product;
   refetch: () => Promise<void>;
 }
 
-const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, suppliers, categories, refetch }) => {
-  const [formData, setFormData] = useState({
-    item_code: '',
-    name: '',
-    description: '',
-    supplier_id: 0,
-    category_id: 0,
-    unit_cost: 0,
-    selling_price: 0,
-    is_vat_exempt: false,
+const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, suppliers, categories, product, refetch }) => {
+  const [formData, setFormData] = useState<UpdateProductPayload>({
+    item_code: product.item_code,
+    name: product.name,
+    description: product.description || '',
+    supplier_id: product.supplier_id,
+    category_id: product.category_id,
+    unit_cost: product.unit_cost,
+    selling_price: product.selling_price,
+    is_vat_exempt: product.is_vat_exempt,
+    is_active: product.is_active,
+    stock_on_hand: product.stock_on_hand
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  useEffect(() => {
+    setFormData({
+      item_code: product.item_code,
+      name: product.name,
+      description: product.description || '',
+      supplier_id: product.supplier_id,
+      category_id: product.category_id,
+      unit_cost: product.unit_cost,
+      selling_price: product.selling_price,
+      is_vat_exempt: product.is_vat_exempt,
+      is_active: product.is_active,
+      stock_on_hand: product.stock_on_hand
+    });
+  }, [product]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value, type } = e.target;
     const newValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
     setFormData(prev => ({
@@ -46,18 +64,18 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, supp
   const { authToken } = useAuth();
   const { addNotification } = useNotification();
 
-  const handleAdd = async () => {
+  const handleUpdate = async () => {
     try {
       if (!authToken) {
-        throw new Error("User not authenticated. Cannot create product.");
+        throw new Error("User not authenticated. Cannot update product.");
       }
-      await createProduct(authToken, formData);
-      addNotification('Product created successfully!', 'success');
+      await updateProduct(authToken, product.product_id, formData);
+      addNotification('Product updated successfully!', 'success');
       onClose();
       await refetch();
     } catch (error: any) {
-      console.error("Failed to create product:", error);
-      addNotification(`Failed to create product: ${error.message || 'Unknown error'}`, 'error');
+      console.error("Failed to update product:", error);
+      addNotification(`Failed to update product: ${error.message || 'Unknown error'}`, 'error');
     }
   };
 
@@ -73,7 +91,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, supp
   }));
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add Product" onSubmit={handleAdd}>
+    <Modal isOpen={isOpen} onClose={onClose} title="Edit Product" onSubmit={handleUpdate} submitButtonText="Update">
       <div className="mt-2">
         <form>
           <div className="mb-4">
@@ -118,6 +136,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, supp
             <Select
               id="supplier_id"
               options={supplierOptions}
+              value={supplierOptions.find(option => option.value === formData.supplier_id)}
               onChange={(selectedOption) => handleSelectChange('supplier_id', selectedOption)}
               className="text-ashley-gray-12"
               theme={(theme) => ({
@@ -139,6 +158,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, supp
             <Select
               id="category_id"
               options={categoryOptions}
+              value={categoryOptions.find(option => option.value === formData.category_id)}
               onChange={(selectedOption) => handleSelectChange('category_id', selectedOption)}
               className="text-ashley-gray-12"
               theme={(theme) => ({
@@ -189,10 +209,35 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, supp
               onChange={handleChange}
             />
           </div>
+
+          <div className="mb-4">
+            <label htmlFor="stock_on_hand" className="block text-ashley-gray-12 text-sm font-bold mb-2">
+              Stock on Hand:
+            </label>
+            <input
+              type="number"
+              id="stock_on_hand"
+              className="text-ashley-gray-12 placeholder-ashley-gray-11 bg-ashley-background border-2 border-ashley-gray-6 rounded-md focus:outline-none focus:ring-2 focus:ring-ashley-accent-8 focus:border-ashley-accent-8 w-full py-2 px-3"
+              value={formData.stock_on_hand}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="is_active" className="block text-ashley-gray-12 text-sm font-bold mb-2">
+              Active:
+            </label>
+            <input
+              type="checkbox"
+              id="is_active"
+              className="mr-2 leading-tight"
+              checked={formData.is_active}
+              onChange={handleChange}
+            />
+          </div>
         </form>
       </div>
     </Modal>
-  )
+  );
 };
 
-export default AddProductModal;
+export default EditProductModal;

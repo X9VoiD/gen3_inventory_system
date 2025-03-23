@@ -36,7 +36,7 @@ export interface CreateProductPayload {
 }
 
 export interface UpdateProductPayload extends CreateProductPayload {
-  is_active: number;
+  is_active: boolean;
   stock_on_hand: number;
 }
 
@@ -48,7 +48,7 @@ export interface PartialUpdateProductPayload {
   unit_cost?: number;
   selling_price?: number;
   is_vat_exempt?: number;
-  is_active?: number;
+  is_active?: boolean;
 }
 
 function buildQueryString(filters?: ProductFilterParams): string {

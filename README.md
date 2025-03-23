@@ -72,10 +72,10 @@ The system supports the following user roles:
 
 5.  **Initialize the database and create an admin user:**
 
-    Run the `bootstrap_server.py` script, providing a username and password for the initial administrator account:
+    Run the `bootstrap_server.py` script, providing an email and password for the initial administrator account:
 
     ```bash
-    python backend/bootstrap_server.py <admin_username> <admin_password>
+    python backend/bootstrap_server.py <admin_email> <admin_password>
     ```
 
 6.  **Start the server:**
