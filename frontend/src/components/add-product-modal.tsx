@@ -47,6 +47,11 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, supp
   const { addNotification } = useNotification();
 
   const handleAdd = async () => {
+    if (formData.selling_price < formData.unit_cost) {
+      addNotification('Selling price cannot be less than unit cost.', 'error');
+      return;
+    }
+
     try {
       if (!authToken) {
         throw new Error("User not authenticated. Cannot create product.");

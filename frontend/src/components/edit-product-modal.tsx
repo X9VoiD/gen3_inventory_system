@@ -65,6 +65,11 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, su
   const { addNotification } = useNotification();
 
   const handleUpdate = async () => {
+    if (formData.selling_price < formData.unit_cost) {
+      addNotification('Selling price cannot be less than unit cost.', 'error');
+      return;
+    }
+
     try {
       if (!authToken) {
         throw new Error("User not authenticated. Cannot update product.");
