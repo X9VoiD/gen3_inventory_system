@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Supplier } from '../api/suppliers';
 import { Category } from '../api/categories';
 import Select from 'react-select';
-import { updateProduct, Product, UpdateProductPayload } from '../api/products';
+import { updateProduct, Product, UpdateProductPayload, deactivateProduct } from '../api/products';
 import { useAuth } from '../providers/auth-provider';
 import { useNotification } from '../providers/notification-provider';
+import useErrorNotifier from '../hooks/useErrorNotifier';
 import Modal from './ui/modal';
 
 interface EditProductModalProps {
@@ -63,6 +64,7 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, su
 
   const { authToken } = useAuth();
   const { addNotification } = useNotification();
+  const { reportError } = useErrorNotifier();
 
   const handleUpdate = async () => {
     if (formData.selling_price < formData.unit_cost) {
@@ -79,11 +81,23 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, su
       onClose();
       await refetch();
     } catch (error: any) {
-      console.error("Failed to update product:", error);
-      addNotification(`Failed to update product: ${error.message || 'Unknown error'}`, 'error');
+      reportError('update product', error);
     }
   };
 
+  const handleDelete = async () => {
+    if (!authToken) {
+      throw new Error("User not authenticated. Cannot delete product.");
+    }
+    try {
+      await deactivateProduct(authToken, product.product_id);
+      addNotification('Product deactivated successfully!', 'success');
+      onClose();
+      await refetch();
+    } catch (error) {
+      reportError('delete product', error);
+    }
+  };
 
   const supplierOptions = suppliers.map(supplier => ({
     value: supplier.supplier_id,
@@ -96,7 +110,15 @@ const EditProductModal: React.FC<EditProductModalProps> = ({ isOpen, onClose, su
   }));
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Edit Product" onSubmit={handleUpdate} submitButtonText="Update">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Edit Product"
+      onSubmit={handleUpdate}
+      submitButtonText="Update"
+      onDelete={handleDelete}
+      deleteButtonText="Delete Product"
+    >
       <div className="mt-2">
         <form>
           <div className="mb-4">

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { updateUser, User, UpdateUserPayload } from '../api/users';
+import { updateUser, User, UpdateUserPayload, deactivateUser } from '../api/users';
 import { useAuth } from '../providers/auth-provider';
 import { useNotification } from '../providers/notification-provider';
+import useErrorNotifier from '../hooks/useErrorNotifier';
 import Select from 'react-select';
 import Modal from './ui/modal';
 
@@ -47,6 +48,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, re
 
   const { authToken } = useAuth();
   const { addNotification } = useNotification();
+  const { reportError } = useErrorNotifier();
 
   const handleUpdate = async () => {
     try {
@@ -58,8 +60,21 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, re
       onClose();
       await refetch();
     } catch (error: any) {
-      console.error("Failed to update user:", error);
-      addNotification(`Failed to update user: ${error.message || 'Unknown error'}`, 'error');
+      reportError('update user', error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!authToken) {
+      throw new Error("User not authenticated. Cannot deactivate user.");
+    }
+    try {
+      await deactivateUser(authToken, user.user_id);
+      addNotification('User deactivated successfully!', 'success');
+      onClose();
+      await refetch();
+    } catch (error) {
+      reportError('deactivate user', error);
     }
   };
 
@@ -81,7 +96,15 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, user, re
   ];
 
   return (
-    <Modal isOpen={isOpen} onClose={modifiedOnClose} title="Edit User" onSubmit={handleUpdate} submitButtonText="Update">
+    <Modal
+      isOpen={isOpen}
+      onClose={modifiedOnClose}
+      title="Edit User"
+      onSubmit={handleUpdate}
+      submitButtonText="Update"
+      onDelete={handleDelete}
+      deleteButtonText="Deactivate User"
+    >
       <div className="mt-2">
         <form>
           <div className="mb-4">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createSupplier, CreateSupplierPayload } from '../api/suppliers';
 import { useAuth } from '../providers/auth-provider';
 import { useNotification } from '../providers/notification-provider';
+import useErrorNotifier from '../hooks/useErrorNotifier';
 import Modal from './ui/modal';
 
 interface AddSupplierModalProps {
@@ -26,6 +27,7 @@ const AddSupplierModal: React.FC<AddSupplierModalProps> = ({ isOpen, onClose, re
 
   const { authToken } = useAuth();
   const { addNotification } = useNotification();
+  const { reportError } = useErrorNotifier();
 
   const handleAdd = async () => {
     try {
@@ -36,9 +38,8 @@ const AddSupplierModal: React.FC<AddSupplierModalProps> = ({ isOpen, onClose, re
       addNotification(`Supplier "${newSupplier.name}" created successfully!`, 'success');
       onClose();
       await refetch();
-    } catch (error: any) {
-      console.error("Failed to create supplier:", error);
-      addNotification(`Failed to create supplier: ${error.message || 'Unknown error'}`, 'error');
+    } catch (error) {
+      reportError('create supplier', error);
     }
   };
 

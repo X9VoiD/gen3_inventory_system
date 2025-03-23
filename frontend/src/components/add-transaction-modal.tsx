@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createTransaction, CreateTransactionPayload } from '../api/transactions';
 import { useAuth } from '../providers/auth-provider';
+import useErrorNotifier from '../hooks/useErrorNotifier';
 import { useNotification } from '../providers/notification-provider';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
@@ -34,6 +35,7 @@ interface UserOption {
 const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen, onClose, refetch }) => {
   const { authToken } = useAuth();
   const { addNotification } = useNotification();
+  const { reportError } = useErrorNotifier();
 
   const [formData, setFormData] = useState<CreateTransactionPayload>({
     product_id: 0,
@@ -100,9 +102,8 @@ const AddTransactionModal: React.FC<AddTransactionModalProps> = ({ isOpen, onClo
       addNotification('Transaction created successfully!', 'success');
       onClose();
       await refetch();
-    } catch (error: any) {
-      console.error("Failed to create transaction:", error);
-      addNotification(`Failed to create transaction: ${error.message || 'Unknown error'}`, 'error');
+    } catch (error) {
+      reportError('create transaction', error);
     }
   };
 

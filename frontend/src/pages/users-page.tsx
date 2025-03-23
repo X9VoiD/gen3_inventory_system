@@ -5,9 +5,11 @@ import { Pencil, XCircle } from 'lucide-react';
 import AddUserModal from '../components/add-user-modal';
 import EditUserModal from '../components/edit-user-modal';
 import { useNotification } from '../providers/notification-provider';
+import useErrorNotifier from '../hooks/useErrorNotifier';
 
 const UsersPage: React.FC = () => {
   const { authToken } = useAuth();
+  const { reportError } = useErrorNotifier();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -21,12 +23,7 @@ const UsersPage: React.FC = () => {
         const data = await getAllUsers(authToken);
         setUsers(data);
       } catch (error) {
-        if (error instanceof Error) {
-          addNotification(`Failed to fetch users: ${error.message}`, 'error');
-        } else {
-          addNotification('Failed to fetch users', 'error');
-        }
-        console.error('Error fetching users:', error)
+        reportError('fetch users', error);
       } finally {
         setLoading(false);
       }
@@ -66,9 +63,8 @@ const UsersPage: React.FC = () => {
         await deactivateUser(authToken, user.user_id);
         addNotification(`User "${user.username}" deactivated successfully!`, 'success');
         await fetchUsers();
-      } catch (error: any) {
-        console.error("Failed to deactivate user:", error);
-        addNotification(`Failed to deactivate user: ${error.message || 'Unknown error'}`, 'error');
+      } catch (error) {
+        reportError('deactivate user', error);
       }
     }
   };

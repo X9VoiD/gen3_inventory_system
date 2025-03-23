@@ -3,12 +3,12 @@ import { getAllTransactions, Transaction } from '../api/transactions';
 import { getAllSuppliers, Supplier } from '../api/suppliers';
 import { getAllUsers, User } from '../api/users';
 import { useAuth } from '../providers/auth-provider';
-import { useNotification } from '../providers/notification-provider';
+import useErrorNotifier from '../hooks/useErrorNotifier';
 import AddTransactionModal from '../components/add-transaction-modal';
 
 const TransactionPage: React.FC = () => {
   const { authToken } = useAuth();
-  const { addNotification } = useNotification();
+  const { reportError } = useErrorNotifier();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -31,12 +31,7 @@ const TransactionPage: React.FC = () => {
         usersData.forEach(user => usersMapData.set(user.user_id, user));
         setUsersMap(usersMapData);
       } catch (error) {
-        if (error instanceof Error) {
-          addNotification(`Failed to fetch transactions: ${error.message}`, 'error');
-        } else {
-          addNotification('Failed to fetch transactions', 'error');
-        }
-        console.error('Error fetching transactions:', error)
+        reportError('fetch transactions', error);
       } finally {
         setLoading(false);
       }

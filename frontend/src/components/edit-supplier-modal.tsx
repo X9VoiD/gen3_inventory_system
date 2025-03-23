@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { updateSupplier, Supplier, UpdateSupplierPayload } from '../api/suppliers';
+import { updateSupplier, Supplier, UpdateSupplierPayload, deleteSupplier } from '../api/suppliers';
 import { useAuth } from '../providers/auth-provider';
 import { useNotification } from '../providers/notification-provider';
+import useErrorNotifier from '../hooks/useErrorNotifier';
 import Modal from './ui/modal';
 
 interface EditSupplierModalProps {
@@ -33,8 +34,8 @@ const EditSupplierModal: React.FC<EditSupplierModalProps> = ({ isOpen, onClose, 
   };
 
   const { authToken } = useAuth();
-
   const { addNotification } = useNotification();
+  const { reportError } = useErrorNotifier();
 
   const handleUpdate = async () => {
     try {
@@ -46,8 +47,21 @@ const EditSupplierModal: React.FC<EditSupplierModalProps> = ({ isOpen, onClose, 
       onClose();
       await refetch();
     } catch (error: any) {
-      console.error("Failed to update supplier:", error);
-      addNotification(`Failed to update supplier: ${error.message || 'Unknown error'}`, 'error');
+      reportError('update supplier', error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!authToken) {
+      throw new Error("User not authenticated. Cannot delete supplier.");
+    }
+    try {
+      await deleteSupplier(authToken, supplier.supplier_id);
+      addNotification('Supplier deleted successfully!', 'success');
+      onClose();
+      await refetch();
+    } catch (error) {
+      reportError('delete supplier', error);
     }
   };
 
@@ -61,7 +75,15 @@ const EditSupplierModal: React.FC<EditSupplierModalProps> = ({ isOpen, onClose, 
 
 
   return (
-    <Modal isOpen={isOpen} onClose={modifiedOnClose} title="Edit Supplier" onSubmit={handleUpdate} submitButtonText="Update">
+    <Modal
+      isOpen={isOpen}
+      onClose={modifiedOnClose}
+      title="Edit Supplier"
+      onSubmit={handleUpdate}
+      submitButtonText="Update"
+      onDelete={handleDelete}
+      deleteButtonText="Delete Supplier"
+    >
       <div className="mt-2">
         <form>
           <div className="mb-4">

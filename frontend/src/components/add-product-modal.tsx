@@ -5,6 +5,7 @@ import Select from 'react-select';
 import { createProduct } from '../api/products';
 import { useAuth } from '../providers/auth-provider';
 import { useNotification } from '../providers/notification-provider';
+import useErrorNotifier from '../hooks/useErrorNotifier';
 import Modal from './ui/modal';
 
 interface AddProductModalProps {
@@ -45,6 +46,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, supp
 
   const { authToken } = useAuth();
   const { addNotification } = useNotification();
+  const { reportError } = useErrorNotifier();
 
   const handleAdd = async () => {
     if (formData.selling_price < formData.unit_cost) {
@@ -61,8 +63,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ isOpen, onClose, supp
       onClose();
       await refetch();
     } catch (error: any) {
-      console.error("Failed to create product:", error);
-      addNotification(`Failed to create product: ${error.message || 'Unknown error'}`, 'error');
+      reportError('create product', error);
     }
   };
 

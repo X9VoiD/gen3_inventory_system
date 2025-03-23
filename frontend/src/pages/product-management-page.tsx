@@ -6,11 +6,11 @@ import { useAuth } from '../providers/auth-provider';
 import { Pencil, Package } from 'lucide-react';
 import AddProductModal from '../components/add-product-modal';
 import EditProductModal from '../components/edit-product-modal';
-import { useNotification } from '../providers/notification-provider';
+import useErrorNotifier from '../hooks/useErrorNotifier';
 
 const ProductManagementPage: React.FC = () => {
   const { authToken } = useAuth();
-  const { addNotification } = useNotification();
+  const { reportError } = useErrorNotifier();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -27,12 +27,7 @@ const ProductManagementPage: React.FC = () => {
         const data = await getAllProducts(authToken);
         setProducts(data);
       } catch (error) {
-        if (error instanceof Error) {
-          addNotification(`Failed to fetch products: ${error.message}`, 'error');
-        } else {
-          addNotification('Failed to fetch products', 'error');
-        }
-        console.error('Error fetching products:', error)
+        reportError('fetch products', error);
       } finally {
         setLoading(false);
       }

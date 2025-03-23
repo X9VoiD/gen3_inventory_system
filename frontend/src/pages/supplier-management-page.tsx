@@ -4,11 +4,11 @@ import { useAuth } from '../providers/auth-provider';
 import { Pencil } from 'lucide-react';
 import AddSupplierModal from '../components/add-supplier-modal';
 import EditSupplierModal from '../components/edit-supplier-modal';
-import { useNotification } from '../providers/notification-provider';
+import useErrorNotifier from '../hooks/useErrorNotifier';
 
 const SupplierManagementPage: React.FC = () => {
   const { authToken } = useAuth();
-  const { addNotification } = useNotification();
+  const { reportError } = useErrorNotifier();
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -21,12 +21,7 @@ const SupplierManagementPage: React.FC = () => {
         const data = await getAllSuppliers(authToken);
         setSuppliers(data);
       } catch (error) {
-        if (error instanceof Error) {
-          addNotification(`Failed to fetch suppliers: ${error.message}`, 'error');
-        } else {
-          addNotification('Failed to fetch suppliers', 'error');
-        }
-        console.log('Error fetching suppliers:', error)
+        reportError('fetch suppliers', error);
       } finally {
         setLoading(false);
       }

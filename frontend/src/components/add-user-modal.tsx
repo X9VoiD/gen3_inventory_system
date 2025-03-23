@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createUser, CreateUserPayload } from '../api/users';
 import { useAuth } from '../providers/auth-provider';
 import { useNotification } from '../providers/notification-provider';
+import useErrorNotifier from '../hooks/useErrorNotifier';
 import Select from 'react-select';
 import Modal from './ui/modal';
 
@@ -35,6 +36,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, refetch })
 
   const { authToken } = useAuth();
   const { addNotification } = useNotification();
+  const { reportError } = useErrorNotifier();
 
   const handleAdd = async () => {
     try {
@@ -45,9 +47,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, refetch })
       addNotification(`User "${newUser.username}" created successfully!`, 'success');
       onClose();
       await refetch();
-    } catch (error: any) {
-      console.error("Failed to create user:", error);
-      addNotification(`Failed to create user: ${error.message || 'Unknown error'}`, 'error');
+    } catch (error) {
+      reportError('create user', error);
     }
   };
 

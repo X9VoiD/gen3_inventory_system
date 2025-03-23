@@ -19,9 +19,9 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ message, type, onCl
       borderColor = 'border-ashley-accent-9'; // Medium green
       break;
     case 'error':
-      bgColor = 'bg-ashley-gray-1'; // Light gray (using for error for now)
-      textColor = 'text-ashley-gray-12'; // Dark gray
-      borderColor = 'border-ashley-gray-9'; // Medium gray
+      bgColor = 'bg-red-100'; // Light gray (using for error for now)
+      textColor = 'text-red-900'; // Dark gray
+      borderColor = 'border-red-400'; // Medium gray
       break;
     case 'info':
       bgColor = 'bg-ashley-gray-3'; // Light blue/gray
@@ -35,11 +35,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({ message, type, onCl
   }
 
   return (
-    <div className={`rounded-md ${bgColor} ${borderColor} border p-4 mb-4 flex justify-between items-center`}>
+    <div
+      className={`rounded-md ${bgColor} ${borderColor} border p-4 mb-4 cursor-pointer`}
+      onClick={onClose}
+    >
       <p className={textColor}>{message}</p>
-      <button onClick={onClose} className="text-ashley-gray-11 hover:text-ashley-gray-12">
-        ×
-      </button>
     </div>
   );
 };
